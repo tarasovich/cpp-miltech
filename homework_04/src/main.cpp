@@ -3,8 +3,10 @@
 #include <fstream>
 #include <iostream>
 
+// вважаємо що більше рядків у вхідних файлах не буде
 constexpr __uint16_t INPUT_LIMIT = 65535;
 
+// чисто щоб тіло програми було менше
 struct ImpulseDatum {
     long fl;
     long fr;
@@ -50,6 +52,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    // перший рядок з усiма нулями це стартовий стан
     long prevTime{}; // NOLINT (disable CppTooWideScopeInitStatement)
     auto prevImpulse = ImpulseDatum{};
 
@@ -119,5 +122,6 @@ int main(int argc, char** argv) {
         prevImpulse = curImpulse;
     }
 
+    // success
     return 0;
 }
