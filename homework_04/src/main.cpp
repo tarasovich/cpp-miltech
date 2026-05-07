@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 
+constexpr __uint16_t INPUT_LIMIT = 65535;
+
 struct ImpulseDatum {
     long fl;
     long fr;
@@ -73,10 +75,17 @@ int main(int argc, char** argv) {
     // ============================================================
     // 5. Алгоритм
     // ============================================================
+    __uint16_t curStep{0};
     long curTime{};
     auto curImpulse = ImpulseDatum{};
     // Читаємо далі увесь файл
     while (inputFile >> curTime >> curImpulse.fl >> curImpulse.fr >> curImpulse.bl >> curImpulse.br) {
+        ++curStep;
+        if (curStep >= INPUT_LIMIT) { // на всякий випадок
+            std::cerr << "Input limit: " << INPUT_LIMIT << std::endl;
+            return 1;
+        }
+
         // Крок 1. Різниця імпульсів по кожному колесу:
         const auto [fl, fr, bl, br] = curImpulse - prevImpulse;
 
