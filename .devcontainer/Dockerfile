@@ -94,6 +94,8 @@ RUN if id ubuntu >/dev/null 2>&1; then \
     useradd -s /bin/bash -m ${CONTAINER_USER} && \
   echo "\nexport PROMPT_COMMAND=\"history -a; history -n\n\"" >> /home/${CONTAINER_USER}/.bashrc
 
+RUN echo "\n\n[ -f /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion\n" >> /home/${CONTAINER_USER}/.bashrc
+
 # Всі подальші команди у контейнері (включно з процесами VS Code remote
 # extension) виконуються від CONTAINER_USER, не від root.
 USER ${CONTAINER_USER}
