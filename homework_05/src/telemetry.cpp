@@ -124,6 +124,15 @@ int read_frames(const char* path, Frame frames[], const int max_frames) {
                 return 0;
             }
 
+            // Validate delta
+            if (frame_count > 0) {
+                const long delta_ms = frames[frame_count].timestamp_ms - frames[frame_count - 1].timestamp_ms;
+                if (delta_ms <= 0) {
+                    std::cerr << "error: invalid frame at line " << line_num << ": non-positive time delta" << std::endl;
+                    return 0;
+                }
+            }
+
             ++frame_count;
         }
     }
