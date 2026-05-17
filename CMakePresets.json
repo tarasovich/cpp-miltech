@@ -65,13 +65,13 @@
     },
     {
       "name": "release",
-      "displayName": "Release",
+      "displayName": "Build Release",
       "description": "Зібрати release preset після configure.",
       "configurePreset": "release"
     },
     {
       "name": "relwithdebinfo",
-      "displayName": "Release with Debug Info",
+      "displayName": "Build Release with Debug Info",
       "description": "Зібрати relwithdebinfo preset після configure.",
       "configurePreset": "relwithdebinfo"
     }
