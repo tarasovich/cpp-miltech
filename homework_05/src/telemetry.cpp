@@ -9,8 +9,8 @@
 // The defects are related to malformed input shape, invalid numeric values,
 // unsafe time deltas, and empty logs. Exact locations are not marked on purpose.
 
-const int EXPECTED_FIELD_COUNT = 7;
-const int MAX_LINE_LENGTH = 256;
+constexpr int EXPECTED_FIELD_COUNT = 7;
+constexpr int MAX_LINE_LENGTH = 256;
 
 int split_line(char line[], char* fields[], const int max_fields) {
     int count = 0;
@@ -98,6 +98,44 @@ double compute_frame_rate_hz(const Frame frames[], const int frame_count) {
     return static_cast<double>((frame_count - 1) * 1000 / elapsed_ms);
 }
 
+
+// 5. Валідація й очікувана поведінка
+void validate_frame(const Frame frames[], const int frame_count) {
+    if (frame_count > 0) {
+        // timestamp_ms зростає;
+        const long delta_ms = frames[frame_count].timestamp_ms - frames[frame_count - 1].timestamp_ms;
+        if (delta_ms <= 0) {
+            throw std::runtime_error("non-positive time delta");
+        }
+
+        // seq зростає на 1
+        const int delta_seq = frames[frame_count].seq - frames[frame_count - 1].seq;
+        if (delta_seq != 1) {
+            throw std::runtime_error("seq not incremented by 1");
+        }
+    }
+
+    // voltage_v > 0;
+    if (frames[frame_count].voltage_v <= 0) {
+        throw std::runtime_error("non-positive voltage \"" + std::to_string(frames[frame_count].voltage_v) + "\"");
+    }
+
+    // temperature_c у діапазоні [-40, 120];
+    if (frames[frame_count].temperature_c < -40.0f || frames[frame_count].temperature_c > 120.0f) {
+        throw std::runtime_error("temperature \"" + std::to_string(frames[frame_count].temperature_c) + "\" out of range");;
+    }
+
+    // gps_fix дорівнює 0 або 1;
+    if (frames[frame_count].gps_fix != 0 && frames[frame_count].gps_fix != 1) {
+        throw std::runtime_error("invalid gps_fix value \"" + std::to_string(frames[frame_count].gps_fix) + "\"");
+    }
+
+    // satellites >= 0.
+    if (frames[frame_count].satellites < 0) {
+        throw std::runtime_error("negative satellites count");
+    }
+}
+
 int read_frames(const char* path, Frame frames[], const int max_frames) {
     std::ifstream input{path};
     if (!input) {
@@ -119,6 +157,7 @@ int read_frames(const char* path, Frame frames[], const int max_frames) {
         if (frame_count < max_frames) {
             try {
                 frames[frame_count] = parse_frame(line);
+                validate_frame(frames, frame_count);
             } catch (const std::exception& e) {
                 std::cerr << "error: invalid frame at line " << line_num << ": " << e.what() << std::endl;
                 return 0;
