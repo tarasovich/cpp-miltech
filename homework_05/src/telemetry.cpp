@@ -25,7 +25,6 @@ int split_line(char line[], char* fields[], const int max_fields) {
 
         if (*cursor == '\n' || *cursor == '\r') {
             *cursor = '\0';
-            pos = 0;
         }
 
         if (*cursor == ' ' || *cursor == '\0') {
@@ -38,6 +37,7 @@ int split_line(char line[], char* fields[], const int max_fields) {
             break;
         }
 
+        ++pos;
         ++cursor;
     }
 
