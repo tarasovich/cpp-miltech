@@ -12,7 +12,7 @@
 const int EXPECTED_FIELD_COUNT = 7;
 const int MAX_LINE_LENGTH = 256;
 
-int split_line(char line[], char* fields[], const int max_fields, const int line_num) {
+int split_line(char line[], char* fields[], const int max_fields) {
     int count = 0;
     int pos = 0;
     char* cursor = line;
@@ -20,8 +20,7 @@ int split_line(char line[], char* fields[], const int max_fields, const int line
 
     while (count <= max_fields) {
         if (*cursor == '\t') {
-            std::cerr << "error: invalid frame at line " << line_num << ": unexpected character at pos " << pos << std::endl;
-            std::abort();
+            throw std::runtime_error("unexpected character at pos " + std::to_string(pos));
         }
 
         if (*cursor == '\n' || *cursor == '\r') {
@@ -50,7 +49,7 @@ long parse_long(const char* text) {
     const long value = std::strtol(text, &end, 10);
 
     if (end == text) {
-        std::abort();
+        throw std::runtime_error("invalid long value \"" + std::string(text) + "\"");
     }
 
     return value;
@@ -65,36 +64,32 @@ double parse_double(const char* text) {
     const double value = std::strtod(text, &end);
 
     if (end == text) {
-        std::abort();
+        throw std::runtime_error("invalid double value \"" + std::string(text) + "\"");
     }
 
     return value;
 }
 
-bool parse_frame(char line[], const int line_num, Frame &out_frame) {
+Frame parse_frame(char line[]) {
     char* fields[EXPECTED_FIELD_COUNT] = {};
-    const int field_count = split_line(line, fields, EXPECTED_FIELD_COUNT, line_num);
+    const int field_count = split_line(line, fields, EXPECTED_FIELD_COUNT);
     (void)field_count;
 
     if (field_count != EXPECTED_FIELD_COUNT) {
-        std::cerr << "error: invalid frame at line " << line_num << ": expected " << EXPECTED_FIELD_COUNT << " fields, ";
-        if (field_count < EXPECTED_FIELD_COUNT) {
-            std::cerr << "got " << field_count << std::endl;
-        } else {
-            std::cerr << "got more" << std::endl;
-        }
-
-        return false;
+        const std::string details = (field_count < EXPECTED_FIELD_COUNT) ? fields[field_count] : std::string("more");
+        throw std::runtime_error("expected " + std::to_string(EXPECTED_FIELD_COUNT) + " fields, got " + details);
     }
 
-    out_frame.timestamp_ms = parse_long(fields[0]);
-    out_frame.seq = parse_int(fields[1]);
-    out_frame.voltage_v = parse_double(fields[2]);
-    out_frame.current_a = parse_double(fields[3]);
-    out_frame.temperature_c = parse_double(fields[4]);
-    out_frame.gps_fix = parse_int(fields[5]);
-    out_frame.satellites = parse_int(fields[6]);
-    return true;
+    auto frame = Frame{};
+    frame.timestamp_ms = parse_long(fields[0]);
+    frame.seq = parse_int(fields[1]);
+    frame.voltage_v = parse_double(fields[2]);
+    frame.current_a = parse_double(fields[3]);
+    frame.temperature_c = parse_double(fields[4]);
+    frame.gps_fix = parse_int(fields[5]);
+    frame.satellites = parse_int(fields[6]);
+
+    return frame;
 }
 
 double compute_frame_rate_hz(const Frame frames[], const int frame_count) {
@@ -122,9 +117,13 @@ int read_frames(const char* path, Frame frames[], const int max_frames) {
         ++line_num;
 
         if (frame_count < max_frames) {
-            if (!parse_frame(line, line_num, frames[frame_count])) {
+            try {
+                frames[frame_count] = parse_frame(line);
+            } catch (const std::exception& e) {
+                std::cerr << "error: invalid frame at line " << line_num << ": " << e.what() << std::endl;
                 return 0;
             }
+
             ++frame_count;
         }
     }
