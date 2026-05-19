@@ -19,3 +19,15 @@ target_link_libraries(ballistics_cli PRIVATE ballistics)
 
 # Базові compiler warnings допомагають побачити підозрілі місця до runtime.
 target_compile_options(ballistics PRIVATE -Wall -Wextra -pedantic)
+
+if (NOT CMAKE_CROSSCOMPILING)
+
+	include(GoogleTest)
+
+	add_executable(ballistics_tests tests/ballistics_tests.cpp)
+
+	target_link_libraries(ballistics_tests PRIVATE ballistics GTest::gtest_main)
+
+	gtest_discover_tests(ballistics_tests DISCOVERY_MODE PRE_TEST)
+
+endif ()
