@@ -38,3 +38,4 @@ Thumbs.db
 # CLion don't wanna see these files in subdir (symlinks created)
 .clang-format
 .cmake-format.json
+.clang-tidy
