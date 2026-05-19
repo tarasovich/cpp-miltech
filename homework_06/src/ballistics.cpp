@@ -4,7 +4,8 @@
 #include <cstring>
 #include <stdexcept>
 
-void validateInput(const BallisticsInput &input, AmmoParams &outAmmoParams) {
+void validateInput(const BallisticsInput &input, AmmoParams &outAmmoParams)
+{
     // навряд скоро будуть такі дрони
     if (input.attackSpeed < 0 || input.attackSpeed > 60) {
         throw std::invalid_argument("Attack speed out of range");
@@ -34,7 +35,8 @@ void validateInput(const BallisticsInput &input, AmmoParams &outAmmoParams) {
 // ============================================================
 // Балістична задача - часу польоту (метод Кардано)
 // ============================================================
-float calculateBombFallTime(const BallisticsInput &input, const AmmoParams &ammo) {
+float calculateBombFallTime(const BallisticsInput &input, const AmmoParams &ammo)
+{
     const float d = ammo.drag;
     const float m = ammo.mass;
     const float l = ammo.lift;
@@ -75,7 +77,8 @@ float calculateBombFallTime(const BallisticsInput &input, const AmmoParams &ammo
 // ============================================================
 // Балістична задача - горизонтальна дистанція (степеневий ряд до t⁵)
 // ============================================================
-float calculateBombFlightDistance(const BallisticsInput &input, const AmmoParams &ammo, float t) {
+float calculateBombFlightDistance(const BallisticsInput &input, const AmmoParams &ammo, float t)
+{
     const float d = ammo.drag;
     const float m = ammo.mass;
     const float l = ammo.lift;
@@ -85,20 +88,19 @@ float calculateBombFlightDistance(const BallisticsInput &input, const AmmoParams
     //   + t³(6d·g·l·m − 6d²(l²-1)·V₀)/(36m²)
     //   + t⁴ (−6d²g·l·(1+l²+l⁴)m + 3d³l²(1+l²)V₀ + 6d³l⁴(1+l²)V₀) / (36(1+l²)²m³)
     //   + t⁵(3d³g·l³m − 3d⁴l²(1+l²)V₀) / (36(1+l²)m⁴)
-    const float t2{t * t}, // для спрощення запису рівняння
-            m2{m * m},
-            d2{d * d},
-            l2{l * l};
-    float hDist = input.attackSpeed * t
-                  - t2 * d * input.attackSpeed / (2.0f * m)
-                  + t2 * t * (6.0f * d * M_GI * l * m - 6.0f * d2 * (l2 - 1.0f) * input.attackSpeed) / (36.0f * m2);
+    const float t2{t * t},  // для спрощення запису рівняння
+        m2{m * m}, d2{d * d}, l2{l * l};
+    float hDist = input.attackSpeed * t - t2 * d * input.attackSpeed / (2.0f * m) +
+                  t2 * t * (6.0f * d * M_GI * l * m - 6.0f * d2 * (l2 - 1.0f) * input.attackSpeed) / (36.0f * m2);
     if (l != 0.0f) {
         // спрощення формули при l=0
         const float l2p1{l2 + 1.0f};
-        hDist += t2 * t2 * (-6.0f * d2 * M_GI * l * (l2p1 + l2 * l2) * m + 3.0f * d2 * d * l2 * l2p1 * input.attackSpeed + 6.0f * d2 * d * l2 * l2 * l2p1 * input.attackSpeed)
-                / (
-                    36.0f * l2p1 * l2p1 * m2 * m)
-                + t2 * t2 * t * (3.0f * d2 * d * M_GI * l2 * l * m - 3.0f * d2 * d2 * l2 * l2p1 * input.attackSpeed) / (36.0f * l2p1 * m2 * m2);
+        hDist +=
+            t2 * t2 *
+                (-6.0f * d2 * M_GI * l * (l2p1 + l2 * l2) * m + 3.0f * d2 * d * l2 * l2p1 * input.attackSpeed +
+                 6.0f * d2 * d * l2 * l2 * l2p1 * input.attackSpeed) /
+                (36.0f * l2p1 * l2p1 * m2 * m) +
+            t2 * t2 * t * (3.0f * d2 * d * M_GI * l2 * l * m - 3.0f * d2 * d2 * l2 * l2p1 * input.attackSpeed) / (36.0f * l2p1 * m2 * m2);
     }
 
     if (hDist <= 0.0f) {
@@ -111,7 +113,8 @@ float calculateBombFlightDistance(const BallisticsInput &input, const AmmoParams
 // ============================================================
 // Балістична задача - точка скиду
 // ============================================================
-BallisticsResult calculateBallistics(const BallisticsInput &input) {
+BallisticsResult calculateBallistics(const BallisticsInput &input)
+{
     AmmoParams ammoParams{};
 
     validateInput(input, ammoParams);
