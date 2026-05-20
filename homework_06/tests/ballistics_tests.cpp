@@ -25,7 +25,6 @@ TEST(Ballistics, ValidateInput)
             FAIL() << "Expected std::invalid_argument";
         }
     }
-
 }
 
 TEST(Ballistics, ComputesKnownDropPoint)

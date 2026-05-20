@@ -21,7 +21,7 @@ void validateInput(const BallisticsInput &input, AmmoParams &outAmmoParams)
         throw std::invalid_argument("Acceleration path out of range");
     }
 
-    for (const auto & ammo : ammos) {
+    for (const auto &ammo : ammos) {
         if (std::strcmp(input.ammoName, ammo.name) == 0) {
             outAmmoParams = ammo;
             return;
@@ -97,12 +97,12 @@ float calculateBombFlightDistance(const BallisticsInput &input, const AmmoParams
     if (l != 0.0f) {
         // спрощення формули при l=0
         const float l2p1{l2 + 1.0f};
-        hDist +=
-            (t2 * t2 *
-                ((-6.0f * d2 * M_GI * l * (l2p1 + (l2 * l2)) * m) + (3.0f * d2 * d * l2 * l2p1 * input.attackSpeed) +
-                 (6.0f * d2 * d * l2 * l2 * l2p1 * input.attackSpeed)) /
-                (36.0f * l2p1 * l2p1 * m2 * m)) +
-            (t2 * t2 * t * ((3.0f * d2 * d * M_GI * l2 * l * m) - (3.0f * d2 * d2 * l2 * l2p1 * input.attackSpeed)) / (36.0f * l2p1 * m2 * m2));
+        hDist += (t2 * t2 *
+                  ((-6.0f * d2 * M_GI * l * (l2p1 + (l2 * l2)) * m) + (3.0f * d2 * d * l2 * l2p1 * input.attackSpeed) +
+                   (6.0f * d2 * d * l2 * l2 * l2p1 * input.attackSpeed)) /
+                  (36.0f * l2p1 * l2p1 * m2 * m)) +
+                 (t2 * t2 * t * ((3.0f * d2 * d * M_GI * l2 * l * m) - (3.0f * d2 * d2 * l2 * l2p1 * input.attackSpeed)) /
+                  (36.0f * l2p1 * m2 * m2));
     }
 
     if (hDist <= 0.0f) {
@@ -133,7 +133,7 @@ BallisticsResult calculateBallistics(const BallisticsInput &input)
     }
 
     return BallisticsResult{
-        .fireX=input.targetX - (dxT / tgtDist * hDist),
-        .fireY=input.targetY - (dyT / tgtDist * hDist),
+        .fireX = input.targetX - (dxT / tgtDist * hDist),
+        .fireY = input.targetY - (dyT / tgtDist * hDist),
     };
 }
