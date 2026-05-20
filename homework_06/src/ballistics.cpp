@@ -21,10 +21,9 @@ void validateInput(const BallisticsInput &input, AmmoParams &outAmmoParams)
         throw std::invalid_argument("Acceleration path out of range");
     }
 
-    constexpr size_t ammosCount = std::size(ammos);
-    for (size_t i = 0; i < ammosCount; i++) {
-        if (std::strcmp(input.ammoName, ammos[i].name) == 0) {
-            outAmmoParams = ammos[i];
+    for (const auto & ammo : ammos) {
+        if (std::strcmp(input.ammoName, ammo.name) == 0) {
+            outAmmoParams = ammo;
             return;
         }
     }
@@ -56,13 +55,13 @@ float calculateBombFallTime(const BallisticsInput &input, const AmmoParams &ammo
     // p = − b² / (3a²)
     const float p = -1.0f * (b * b / (3.0f * a * a));
     if (p >= 0) {
-        return false;
+        return 0.0f;
     }
 
     // q = 2b³ / (27a³) + c / a
-    const float q = (2.0f * b * b * b) / (27.0f * a * a * a) + c / a;
+    const float q = ((2.0f * b * b * b) / (27.0f * a * a * a)) + (c / a);
 
-    // φ = arccos( 3q / (2p) · √(−3/p) )
+    // φ = arccos( 3q / (2p) · √(−3/p))
     const float argArc = 3.0f * q / (2.0f * p) * std::sqrt(-3.0f / p);
     if (argArc < -1.0f || argArc > 1.0f) {
         throw std::logic_error("No real solution for input data");
@@ -71,7 +70,7 @@ float calculateBombFallTime(const BallisticsInput &input, const AmmoParams &ammo
     const float phi = std::acos(argArc);
 
     // t = 2√(−p/3) · cos( (φ + 4π) / 3 ) − b / (3a)
-    return 2.0f * std::sqrt(-p / 3.0f) * std::cos((phi + static_cast<float>(4.0f * M_PI)) / 3.0f) - b / (3.0f * a);
+    return (2.0f * std::sqrt(-p / 3.0f) * std::cos((phi + static_cast<float>(4.0f * M_PI)) / 3.0f)) - (b / (3.0f * a));
 }
 
 // ============================================================
@@ -88,19 +87,22 @@ float calculateBombFlightDistance(const BallisticsInput &input, const AmmoParams
     //   + t³(6d·g·l·m − 6d²(l²-1)·V₀)/(36m²)
     //   + t⁴ (−6d²g·l·(1+l²+l⁴)m + 3d³l²(1+l²)V₀ + 6d³l⁴(1+l²)V₀) / (36(1+l²)²m³)
     //   + t⁵(3d³g·l³m − 3d⁴l²(1+l²)V₀) / (36(1+l²)m⁴)
-    const float t2{t * t},  // для спрощення запису рівняння
-        m2{m * m}, d2{d * d}, l2{l * l};
-    float hDist = input.attackSpeed * t - t2 * d * input.attackSpeed / (2.0f * m) +
-                  t2 * t * (6.0f * d * M_GI * l * m - 6.0f * d2 * (l2 - 1.0f) * input.attackSpeed) / (36.0f * m2);
+    // для спрощення запису рівняння
+    const float t2{t * t};
+    const float m2{m * m};
+    const float d2{d * d};
+    const float l2{l * l};
+    float hDist = (input.attackSpeed * t) - (t2 * d * input.attackSpeed / (2.0f * m)) +
+                  (t2 * t * ((6.0f * d * M_GI * l * m) - (6.0f * d2 * (l2 - 1.0f) * input.attackSpeed)) / (36.0f * m2));
     if (l != 0.0f) {
         // спрощення формули при l=0
         const float l2p1{l2 + 1.0f};
         hDist +=
-            t2 * t2 *
-                (-6.0f * d2 * M_GI * l * (l2p1 + l2 * l2) * m + 3.0f * d2 * d * l2 * l2p1 * input.attackSpeed +
-                 6.0f * d2 * d * l2 * l2 * l2p1 * input.attackSpeed) /
-                (36.0f * l2p1 * l2p1 * m2 * m) +
-            t2 * t2 * t * (3.0f * d2 * d * M_GI * l2 * l * m - 3.0f * d2 * d2 * l2 * l2p1 * input.attackSpeed) / (36.0f * l2p1 * m2 * m2);
+            (t2 * t2 *
+                ((-6.0f * d2 * M_GI * l * (l2p1 + (l2 * l2)) * m) + (3.0f * d2 * d * l2 * l2p1 * input.attackSpeed) +
+                 (6.0f * d2 * d * l2 * l2 * l2p1 * input.attackSpeed)) /
+                (36.0f * l2p1 * l2p1 * m2 * m)) +
+            (t2 * t2 * t * ((3.0f * d2 * d * M_GI * l2 * l * m) - (3.0f * d2 * d2 * l2 * l2p1 * input.attackSpeed)) / (36.0f * l2p1 * m2 * m2));
     }
 
     if (hDist <= 0.0f) {
@@ -131,7 +133,7 @@ BallisticsResult calculateBallistics(const BallisticsInput &input)
     }
 
     return BallisticsResult{
-        input.targetX - dxT / tgtDist * hDist,
-        input.targetY - dyT / tgtDist * hDist,
+        .fireX=input.targetX - (dxT / tgtDist * hDist),
+        .fireY=input.targetY - (dyT / tgtDist * hDist),
     };
 }
