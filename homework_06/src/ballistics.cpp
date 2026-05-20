@@ -28,7 +28,7 @@ void validateInput(const BallisticsInput &input, AmmoParams &outAmmoParams)
         }
     }
 
-    throw std::invalid_argument("Unknow ammo \"" + std::string(input.ammoName) + "\"");
+    throw std::invalid_argument("Unknown ammo \"" + std::string(input.ammoName) + "\"");
 }
 
 // ============================================================
