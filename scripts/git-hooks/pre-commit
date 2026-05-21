@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+
+FILES=$(git diff --cached --name-only --diff-filter=ACMR \
+    | grep -E '\.(cpp|hpp|h|c|cc|cxx)$' || true)
+
+[ -z "$FILES" ] && exit 0
+
+FAILED=0
+
+for file in $FILES; do
+    if ! diff -u "$file" <(clang-format -style=file:./.devcontainer/.clang-format "$file") >/dev/null; then
+        echo "Formatting required: $file"
+        FAILED=1
+    fi
+done
+
+if [ "$FAILED" -eq 1 ]; then
+    echo "Run clang-format before commit"
+    exit 1
+fi

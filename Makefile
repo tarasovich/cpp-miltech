@@ -29,5 +29,10 @@ test: build
 
 quality: format lint test
 
+install-hooks:
+	mkdir -p .git/hooks
+	cp scripts/git-hooks/pre-commit .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
+
 clean:
 	rm -rf $(BUILD_DIR)
