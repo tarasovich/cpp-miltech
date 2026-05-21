@@ -4,7 +4,7 @@
 # VS Code. Інакше "works on my machine" виникає постійно: локальний
 # devcontainer має одні версії тулів, CI runner інші. Тут вони однакові.
 
-name: Build
+name: Build & Test
 
 # Тригери:
 # - push.branches: [main] - запускаємо тільки при push у main (тобто
@@ -17,7 +17,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build_test:
     # ubuntu-latest - загальний GitHub runner з preinstalled Docker і
     # актуальною Ubuntu. Для нашого випадку (build всередині
     # devcontainer-а) специфічний runner не потрібен.
@@ -43,7 +43,7 @@ jobs:
       # build/debug. Це також збігається з clangd compile_commands і
       # VS Code debug launch config. ARM64 preset додатково перевіряє,
       # що demo-код можна крос-компілювати для SBC target-а.
-      - name: Build inside dev container
+      - name: Build & Test inside dev container
         uses: devcontainers/ci@v0.3
         with:
           # push: never - не публікувати built image ніде. За замовчуванням
@@ -56,3 +56,4 @@ jobs:
             cmake --build --preset debug
             cmake --preset aarch64-debug
             cmake --build --preset aarch64-debug
+            ctest --test-dir build/debug --output-on-failure
