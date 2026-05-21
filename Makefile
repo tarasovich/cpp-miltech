@@ -1,22 +1,31 @@
-BUILD_DIR := build/debug
+BUILD_DIR := build
+DEFAULT_PRESET := debug
+AARCH64_PRESET := aarch64-debug
 
-.PHONY: build format lint test quality clean
+.PHONY: configure build build-all format lint test quality clean
 
-build:
-	cmake --build --preset debug
+configure:
+	cmake --preset $(DEFAULT_PRESET)
+
+build: configure
+	cmake --build --preset $(DEFAULT_PRESET)
+
+build-all: build
+	cmake --preset $(AARCH64_PRESET)
+	cmake --build --preset $(AARCH64_PRESET)
 
 format:
 	find . \( -name "*.cpp" -o -name "*.hpp" \) \
-		-not -path "./build/*" \
+		-not -path "./$(BUILD_DIR)/*" \
 		-exec clang-format -i {} +
 
 lint:
 	find . \( -name "*.cpp" -o -name "*.hpp" \) \
-		-not -path "./build/*" \
-		-exec clang-tidy {} -p $(BUILD_DIR) \;
+		-not -path "./$(BUILD_DIR)/*" \
+		-exec clang-tidy {} -p $(BUILD_DIR)/$(DEFAULT_PRESET) \;
 
 test: build
-	ctest --test-dir $(BUILD_DIR) --output-on-failure
+	ctest --test-dir $(BUILD_DIR)/$(DEFAULT_PRESET) --output-on-failure
 
 quality: format lint test
 

@@ -41,11 +41,8 @@ jobs:
           # білд і тести запускаємо одним кроком, щоб не піднімати контейнер двічі.
           push: never
           runCmd: |
-            cmake --preset debug
-            cmake --build --preset debug
-            cmake --preset aarch64-debug
-            cmake --build --preset aarch64-debug
-            ctest --test-dir build/debug --output-on-failure
+            make build-all
+            make test
 
       # Зберігаємо build як артефакт, щоб його можна було
       # використати в clang-tidy workflow.
