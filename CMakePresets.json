@@ -7,24 +7,46 @@
   },
   "configurePresets": [
     {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}"
+    },
+    {
       "name": "debug",
+      "inherits": "base",
       "displayName": "Debug",
       "description": "Debug build для занять блоку 2: символи для GDB і зрозуміла структура build/debug.",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
       "name": "aarch64-debug",
+      "inherits": "base",
       "displayName": "ARM64 Debug",
       "description": "Cross-compile debug build для Raspberry Pi / Radxa / Jetson через aarch64-linux-gnu toolchain.",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/aarch64-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/toolchains/aarch64-linux-gnu.cmake"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "description": "Release build: оптимізований код без символів.",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "relwithdebinfo",
+      "displayName": "RelWithDebInfo",
+      "description": "RelWithDebInfo build: оптимізований код з символами для GDB, але без зрозумілої структури build/debug.",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     }
   ],
@@ -40,6 +62,18 @@
       "displayName": "Build ARM64 Debug",
       "description": "Зібрати ARM64 debug preset після cross-configure.",
       "configurePreset": "aarch64-debug"
+    },
+    {
+      "name": "release",
+      "displayName": "Build Release",
+      "description": "Зібрати release preset після configure.",
+      "configurePreset": "release"
+    },
+    {
+      "name": "relwithdebinfo",
+      "displayName": "Build Release with Debug Info",
+      "description": "Зібрати relwithdebinfo preset після configure.",
+      "configurePreset": "relwithdebinfo"
     }
   ]
 }
