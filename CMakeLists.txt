@@ -31,6 +31,7 @@ endif ()
 
 # Домашні роботи. По мірі появи додаємо кожну окремим add_subdirectory.
 add_subdirectory(homework_04)
+add_subdirectory(homework_05)
 add_subdirectory(homework_06)
 
 # Demo-код для заняття 2.4: локальне і віддалене відлагодження через GDB.
