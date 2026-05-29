@@ -64,7 +64,7 @@
             "character, the behavior of the  fractional indentation is",
             "governed by <fractional_tab_policy>"
         ],
-        "use_tabchars": false,
+        "use_tabchars": true,
         "_help_fractional_tab_policy": [
             "If <use_tabchars> is True, then the value of this variable",
             "indicates how fractional indentions are handled during",
@@ -94,7 +94,7 @@
             "If true, separate flow control names from their parentheses",
             "with a space"
         ],
-        "separate_ctrl_name_with_space": false,
+        "separate_ctrl_name_with_space": true,
         "_help_separate_fn_name_with_space": [
             "If true, separate function names from parentheses with a",
             "space"
@@ -104,7 +104,7 @@
             "If a statement is wrapped to more than one line, than dangle",
             "the closing parenthesis on its own line."
         ],
-        "dangle_parens": false,
+        "dangle_parens": true,
         "_help_dangle_align": [
             "If the trailing parenthesis must be 'dangled' on its on",
             "line, then align it to this reference: `prefix`: the start",

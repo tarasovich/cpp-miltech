@@ -1,0 +1,25 @@
+# GitHub Actions workflow: збірка проєкту через репівський devcontainer.
+#
+# Ключова ідея: CI використовує ТОЙ САМИЙ Dockerfile що й локально у
+# VS Code. Інакше "works on my machine" виникає постійно: локальний
+# devcontainer має одні версії тулів, CI runner інші. Тут вони однакові.
+
+name: CI
+
+# Тригери:
+# - push.branches: [main] - запускаємо тільки при push у main (тобто
+#   при merge PR). Обмеження важливе: без нього push + pull_request
+#   запускали б одну й ту саму збірку двічі на кожен update PR.
+# - pull_request: запускаємо при відкритті PR і кожному update гілки.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build_test:
+    uses: ./.github/workflows/build_test.yml
+
+  clang_tidy:
+    needs: build_test
+    uses: ./.github/workflows/clang_tidy.yml

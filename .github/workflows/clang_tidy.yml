@@ -1,0 +1,42 @@
+# Цей workflow запускається з .github/workflows/ci.yml і запускає лінтер
+name: Clang Tidy
+
+on:
+  workflow_call:
+
+jobs:
+  clang_tidy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Стандартний checkout коду. v4 - поточна стабільна major.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Завантажуємо build з попереднього workflow
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: build/debug
+
+      # Шукаємо змінені C/C++ файли
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **/*.cpp
+            **/*.h
+            **/*.hpp
+            **/*.cc
+
+      # Переписуємо шляхи в compile_commands.json, щоб clang-tidy міг знайти файли
+      # й запускаємо для змінених файлів. Якщо змінених файлів немає, просто пропускаємо крок.
+      - name: Run clang-tidy on changed files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Changed files: ${{ steps.changed-files.outputs.all_changed_files }}"
+          sed -i "s|/home/runner/[^/]*|$GITHUB_WORKSPACE|g" build/debug/compile_commands.json
+          clang-tidy --config-file=./.devcontainer/.clang-tidy -p build/debug ${{ steps.changed-files.outputs.all_changed_files }}
