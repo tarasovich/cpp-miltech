@@ -6,8 +6,8 @@
 class IConfigLoader {
 public:
     virtual bool load() = 0;
-    virtual Config *getConfig() = 0;
-    virtual AmmoParams *getAmmoParams() = 0;
+    virtual Config *getConfig() const = 0;
+    virtual AmmoParams *getAmmoParams() const = 0;
     virtual ~IConfigLoader() = default;
 };
 

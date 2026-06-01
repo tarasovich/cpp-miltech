@@ -20,13 +20,14 @@ public:
     fs::path getMainPath() const { return this->mainPath; }
     fs::path getAmmoPath() const { return this->ammoPath; }
 
-    Config *getConfig() override
+    Config *getConfig() const override
     {
         this->requireLoad();
 
         return resultConfig;
     }
-    AmmoParams *getAmmoParams() override
+
+    AmmoParams *getAmmoParams() const override
     {
         this->requireLoad();
 
@@ -44,8 +45,6 @@ public:
         resultAmmoParams = nullptr;
     }
 
-    bool isLoaded = false;
-
 protected:
     Config *resultConfig = nullptr;
     AmmoParams *resultAmmoParams = nullptr;
@@ -54,6 +53,7 @@ protected:
     virtual bool parseAmmoConfig(const fs::path &filePath) = 0;
 
 private:
+    bool isLoaded = false;
     fs::path mainPath;
     fs::path ammoPath;
 

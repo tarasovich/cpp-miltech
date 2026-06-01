@@ -3,10 +3,18 @@
 #include "Target.hpp"
 
 class ITargetProvider {
-  public:
-    virtual int getTargetCount() = 0;
-    virtual Target getTarget(int index) = 0;
+public:
+    virtual uint8_t getTargetCount() const = 0;
+    virtual Target getTarget(uint8_t index) const = 0;
     virtual ~ITargetProvider() = default;
 };
+
+inline std::ostream& operator<<(std::ostream& os, const ITargetProvider& targetProvider)
+{
+    os << "Target provider:\n"
+       << "  targetCount: " << static_cast<int>(targetProvider.getTargetCount()) << "\n";
+
+    return os;
+}
 
 #endif  // DRONE_SIMULATION_ITARGETPROVIDER_HPP

@@ -18,8 +18,8 @@ add_executable(drone_simulation ${SOURCES} ${HEADERS})
 
 target_include_directories(drone_simulation PUBLIC
 		include/lib
+		include/core
 		include/core/config
-		include/core/ballistics
 		include/dto
 		include/interfaces
 )
