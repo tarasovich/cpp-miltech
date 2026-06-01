@@ -1,0 +1,9 @@
+#ifndef DRONE_SIMULATION_ICONFIGLOADEROPTIONS_HPP
+#define DRONE_SIMULATION_ICONFIGLOADEROPTIONS_HPP
+
+class IConfigLoaderOptions {
+public:
+    virtual ~IConfigLoaderOptions() = default;
+};
+
+#endif  // DRONE_SIMULATION_ICONFIGLOADEROPTIONS_HPP

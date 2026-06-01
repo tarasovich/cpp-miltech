@@ -103,6 +103,12 @@
     <clangFormatSettings>
       <option name="ENABLED" value="true" />
     </clangFormatSettings>
+    <files>
+      <extensions>
+        <pair source="cpp" header="hpp" fileNamingConvention="NONE" />
+        <pair source="c" header="h" fileNamingConvention="NONE" />
+      </extensions>
+    </files>
     <codeStyleSettings language="CMake">
       <indentOptions>
         <option name="USE_TAB_CHARACTER" value="true" />
