@@ -10,10 +10,10 @@ using json = nlohmann::json;
 
 bool JsonTargetProvider::load()
 {
-    std::ifstream fstream(this->jsonPath);
+    std::ifstream fstream(this->jsonPath_);
 
     if (!fstream.is_open()) {
-        throw std::invalid_argument("JsonTargetProvider::load(): Failed to open " + this->jsonPath.string());
+        throw std::invalid_argument("JsonTargetProvider::load(): Failed to open " + this->jsonPath_.string());
     }
 
     json jc{};
@@ -21,23 +21,23 @@ bool JsonTargetProvider::load()
         fstream >> jc;
     }
     catch (const json::exception &e) {
-        throw std::invalid_argument("JsonTargetProvider::load(): Failed to parse " + this->jsonPath.string() + ":\n" + e.what());
+        throw std::invalid_argument("JsonTargetProvider::load(): Failed to parse " + this->jsonPath_.string() + ":\n" + e.what());
     }
 
     try {
-        this->targetCount = jc.at("targetCount");
+        this->targetCount_ = jc.at("targetCount");
         const uint8_t timeSteps = jc.at("timeSteps");
-        this->targets = new Target *[this->targetCount];  // NOLINT(cppcoreguidelines-owning-memory)
-        for (uint8_t i = 0; i < this->targetCount; i++) {
-            this->targets[i] = new Target[timeSteps];  // NOLINT(cppcoreguidelines-owning-memory)
+        this->targets_ = new Target *[this->targetCount_];  // NOLINT(cppcoreguidelines-owning-memory)
+        for (uint8_t i = 0; i < this->targetCount_; i++) {
+            this->targets_[i] = new Target[timeSteps];  // NOLINT(cppcoreguidelines-owning-memory)
             for (uint8_t j = 0; j < timeSteps; j++) {
-                this->targets[i][j].pos = Coord{.x = jc.at("targets").at(i).at("positions").at(j).at("x"),
-                                                .y = jc.at("targets").at(i).at("positions").at(j).at("y")};
+                this->targets_[i][j].pos = Coord{.x = jc.at("targets").at(i).at("positions").at(j).at("x"),
+                                                 .y = jc.at("targets").at(i).at("positions").at(j).at("y")};
             }
         }
     }
     catch (json::exception &e) {
-        throw std::logic_error("JsonTargetProvider::load(): Failed to parse " + this->jsonPath.string() + ":\n" + e.what());
+        throw std::logic_error("JsonTargetProvider::load(): Failed to parse " + this->jsonPath_.string() + ":\n" + e.what());
     }
 
     return true;

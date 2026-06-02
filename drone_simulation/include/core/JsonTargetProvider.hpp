@@ -12,45 +12,45 @@ namespace fs = std::filesystem;
 class JsonTargetProvider : public ITargetProvider {
 public:
     explicit JsonTargetProvider(fs::path jsonPath = "targets.json")
-        : jsonPath(std::move(jsonPath))
+        : jsonPath_(std::move(jsonPath))
     {
         this->load();
     }
 
-    fs::path getJsonPath() const { return jsonPath; }
+    fs::path getJsonPath() const { return jsonPath_; }
 
-    uint8_t getTargetCount() const override { return targetCount; }
+    uint8_t getTargetCount() const override { return targetCount_; }
 
     Target getTarget(const uint8_t index) const override
     {
-        if (index >= targetCount) {
+        if (index >= targetCount_) {
             throw std::out_of_range("JsonTargetProvider::getTarget(): Index out of bounds");
         }
 
-        return *targets[index];
+        return *targets_[index];
     }
 
     ~JsonTargetProvider() override
     {
         std::cout << "JsonTargetProvider destroy\n";
 
-        if (targetCount > 0) {
-            for (uint8_t i = 0; i < targetCount; i++) {
-                delete[] targets[i];  // NOLINT(cppcoreguidelines-owning-memory)
+        if (targetCount_ > 0) {
+            for (uint8_t i = 0; i < targetCount_; i++) {
+                delete[] targets_[i];  // NOLINT(cppcoreguidelines-owning-memory)
             }
-            delete[] targets;
+            delete[] targets_;
         }
 
-        targets = nullptr;
+        targets_ = nullptr;
     }
 
 private:
-    fs::path jsonPath;
+    fs::path jsonPath_;
 
-    uint8_t targetCount = 0;
-    Target **targets = nullptr;
+    uint8_t targetCount_ = 0;
+    Target **targets_ = nullptr;
 
-    bool isLoaded = false;
+    bool isLoaded_ = false;
 
     bool load();
 };

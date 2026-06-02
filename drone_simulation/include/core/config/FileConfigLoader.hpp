@@ -12,14 +12,14 @@ class FileConfigLoader : public IConfigLoader {
 public:
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     explicit FileConfigLoader(const std::string &mainPath, const std::string &ammoPath)
-        : mainPath(mainPath)
-        , ammoPath(ammoPath)
+        : mainPath_(mainPath)
+        , ammoPath_(ammoPath)
     {
     }
 
     bool load() override
     {
-        if (this->isLoaded) {
+        if (isLoaded_) {
             throw std::logic_error("FileConfigLoader::load(): already loaded");
         }
 
@@ -27,81 +27,81 @@ public:
             throw std::invalid_argument("FileConfigLoader::load(): could not load " + this->getMainPath().string());
         }
 
-        this->isLoaded = true;
+        isLoaded_ = true;
 
-        return this->isLoaded;
+        return isLoaded_;
     }
 
-    fs::path getMainPath() const { return this->mainPath; }
-    fs::path getAmmoPath() const { return this->ammoPath; }
+    fs::path getMainPath() const { return this->mainPath_; }
+    fs::path getAmmoPath() const { return this->ammoPath_; }
 
     Config *getConfig() const override
     {
         this->requireLoad();
 
-        return resultConfig;
+        return resultConfig_;
     }
 
     AmmoParams *getAmmoParams() const override
     {
         this->requireLoad();
 
-        return resultAmmoParams;
+        return resultAmmoParams_;
     }
 
     ~FileConfigLoader() override
     {
         std::cout << "destroy FileConfigLoader\n";
 
-        if (resultConfig != nullptr) {
-            delete resultConfig;
-            resultConfig = nullptr;
+        if (resultConfig_ != nullptr) {
+            delete resultConfig_;
+            resultConfig_ = nullptr;
         }
 
-        if (resultAmmoParams != nullptr) {
-            delete resultAmmoParams;
-            resultAmmoParams = nullptr;
+        if (resultAmmoParams_ != nullptr) {
+            delete resultAmmoParams_;
+            resultAmmoParams_ = nullptr;
         }
     }
 
 protected:
     Config *initResultConfig()
     {
-        if (resultConfig != nullptr) {
+        if (resultConfig_ != nullptr) {
             throw std::logic_error("FileConfigLoader::initResultConfig(): resultConfig already initialized");
         }
 
         // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-        resultConfig = new Config();
+        resultConfig_ = new Config();
 
-        return resultConfig;
+        return resultConfig_;
     }
 
     AmmoParams *initResultAmmoParams()
     {
-        if (resultAmmoParams != nullptr) {
+        if (resultAmmoParams_ != nullptr) {
             throw std::logic_error("FileConfigLoader::initResultAmmoParams(): resultAmmoParams already initialized");
         }
 
         // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-        resultAmmoParams = new AmmoParams;
+        resultAmmoParams_ = new AmmoParams;
 
-        return resultAmmoParams;
+        return resultAmmoParams_;
     }
 
     virtual bool parse() = 0;
 
 private:
-    bool isLoaded = false;
-    fs::path mainPath;
-    fs::path ammoPath;
+    bool isLoaded_ = false;
+    fs::path mainPath_;
+    fs::path ammoPath_;
 
-    Config *resultConfig = nullptr;
-    AmmoParams *resultAmmoParams = nullptr;
+    Config *resultConfig_ = nullptr;
+    AmmoParams *resultAmmoParams_ = nullptr;
 
     void requireLoad() const
     {
-        if (!this->isLoaded) {
+        if (!isLoaded_) {
             throw std::logic_error("FileConfigLoader: not loaded");
         }
     }

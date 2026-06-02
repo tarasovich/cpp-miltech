@@ -44,7 +44,7 @@ bool JsonConfigLoader::parse()
         std::ifstream fstream(mainPath);
 
         if (!fstream.is_open()) {
-            throw std::invalid_argument("JsonConfigLoader::parseMainConfig(): Failed to open " + mainPath.string());
+            throw std::invalid_argument("JsonConfigLoader::parse(): Failed to open " + mainPath.string());
         }
 
         json jc{};
@@ -52,7 +52,7 @@ bool JsonConfigLoader::parse()
         jc.get_to(*resultConfig);
     }
     catch (const json::exception &e) {
-        throw std::invalid_argument("JsonConfigLoader::parseMainConfig(): Failed to parse " + mainPath.string() + ":\n" + e.what());
+        throw std::invalid_argument("JsonConfigLoader::parse(): Failed to parse " + mainPath.string() + ":\n" + e.what());
     }
 
     // ------------------------
@@ -71,12 +71,12 @@ bool JsonConfigLoader::parse()
         fstream >> jc;
     }
     catch (const std::exception &e) {
-        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): Failed to parse " + ammoPath.string() + ":\n" + e.what());
+        throw std::invalid_argument("JsonConfigLoader::parse(): Failed to parse " + ammoPath.string() + ":\n" + e.what());
     }
 
     const uint8_t ammoCount{static_cast<uint8_t>(jc.size())};
     if (ammoCount < 1) {
-        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): No ammos in " + ammoPath.string());
+        throw std::invalid_argument("JsonConfigLoader::parse(): No ammos in " + ammoPath.string());
     }
 
     auto *resultAmmo = this->initResultAmmoParams();
@@ -93,11 +93,11 @@ bool JsonConfigLoader::parse()
         }
     }
     catch (const json::exception &e) {
-        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): Failed to parse " + ammoPath.string() + ":\n" + e.what());
+        throw std::invalid_argument("JsonConfigLoader::parse(): Failed to parse " + ammoPath.string() + ":\n" + e.what());
     }
 
     if (!isAmmoFound) {
-        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): No ammo with name \"" + resultConfig->ammoName + "\" in " +
+        throw std::invalid_argument("JsonConfigLoader::parse(): No ammo with name \"" + resultConfig->ammoName + "\" in " +
                                     ammoPath.string());
     }
 
