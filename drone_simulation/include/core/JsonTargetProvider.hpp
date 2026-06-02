@@ -45,12 +45,12 @@ public:
     }
 
 private:
-    fs::path jsonPath_;
+    fs::path jsonPath_{};
 
-    uint8_t targetCount_ = 0;
+    uint8_t targetCount_{0};
     Target **targets_ = nullptr;
 
-    bool isLoaded_ = false;
+    bool isLoaded_{false};
 
     bool load();
 };

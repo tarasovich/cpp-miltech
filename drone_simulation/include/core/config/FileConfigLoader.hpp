@@ -92,7 +92,7 @@ protected:
     virtual bool parse() = 0;
 
 private:
-    bool isLoaded_ = false;
+    bool isLoaded_{false};
     fs::path mainPath_;
     fs::path ammoPath_;
 

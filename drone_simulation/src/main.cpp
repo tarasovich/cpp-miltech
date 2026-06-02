@@ -4,6 +4,7 @@
 #include "IBallisticSolver.hpp"
 #include "ITargetProvider.hpp"
 #include "JsonConfigLoader.hpp"
+#include "MissionProcessor.hpp"
 #include "TargetProviderFactory.hpp"
 #include <cstring>
 // ============================================================
@@ -12,7 +13,7 @@
 void usage()
 {
     std::cout << "Usage:\n"
-              << "  drone_simulation [data_dir] [config_file] [ammo_file] [targets_file]\n\n"
+              << "  drone_simulation [data_dir] [config_file] [ammo_file] [targets_file] [max_steps]\n\n"
               << "Arguments:\n"
               << "  data_dir     Directory containing configuration files.\n"
               << "               Default: drone_simulation/data\n"
@@ -22,11 +23,13 @@ void usage()
               << "               Default: ammo.json\n\n"
               << "  targets_file Targets configuration file name.\n"
               << "               Default: targets.json\n\n"
+              << "  max_steps    Maximum simulation steps count\n"
+              << "               Default: 10000\n\n"
               << "Examples:\n"
               << "  drone_simulation\n"
               << "  drone_simulation ./data\n"
-              << "  drone_simulation ./data config.json ammo.json targets.json"
-              << "  drone_simulation /etc/drone custom_config.json custom_ammo.json custom_targets.json\n\n"
+              << "  drone_simulation ./data config.json ammo.json targets.json 1000\n"
+              << "  drone_simulation /etc/drone custom_config.json custom_ammo.json custom_targets.json 10000\n\n"
               << "Options:\n"
               << "  -h, --help, help   Show this help message.\n";
 }
@@ -47,6 +50,16 @@ int main(const int argc, char *argv[])
     const std::string configFilename = (argc > 2) ? argv[2] : "config.json";
     const std::string ammoFilename = (argc > 3) ? argv[3] : "ammo.json";
     const std::string targetsFilename = (argc > 4) ? argv[4] : "targets.json";
+    uint16_t maxSteps = 10000;
+    if (argc > 5) {
+        try {
+            maxSteps = std::stoi(argv[5]);
+        }
+        catch (const std::exception &e) {
+            std::cerr << "Error parsing max steps: " << e.what() << '\n';
+            return 1;
+        }
+    }
 
     const IConfigLoaderOptions *configOptions = new FileConfigLoaderOptions(dataDir, configFilename, ammoFilename);
 
@@ -56,16 +69,6 @@ int main(const int argc, char *argv[])
     }
     catch (const std::exception &e) {
         std::cerr << "Error creating config loader: " << e.what() << '\n';
-        delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
-        return 1;
-    }
-
-    try {
-        configLoader->load();
-    }
-    catch (const std::exception &e) {
-        std::cerr << "Error loading configuration: " << e.what() << '\n';
-        delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
         delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
         return 1;
     }
@@ -82,13 +85,6 @@ int main(const int argc, char *argv[])
         return 1;
     }
 
-    const auto *config = configLoader->getConfig();
-    const auto *ammoParams = configLoader->getAmmoParams();
-
-    std::cout << *config << '\n';
-    std::cout << *ammoParams << '\n';
-    std::cout << *targets << '\n';
-
     IBallisticSolver *solver = nullptr;
     try {
         solver = BallisticSolverFactory::create(SolverType::ANALYTICAL);
@@ -101,13 +97,33 @@ int main(const int argc, char *argv[])
         return 1;
     }
 
-    const Coord ballistic = solver->solve(config->startPos, targets->getTarget(0).pos, *config, ammoParams[0]);
-    std::cout << "Ballistic solution for target 0: (" << ballistic.x << ", " << ballistic.y << ")\n";
+    int result = 0;
 
-    delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
-    delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
-    delete targets;        // NOLINT(cppcoreguidelines-owning-memory)
-    delete solver;         // NOLINT(cppcoreguidelines-owning-memory)
+    MissionProcessor *missionProcessor = nullptr;
+    try {
+        // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
+        missionProcessor = new MissionProcessor(maxSteps);
+        missionProcessor->init(configLoader, targets);
+        missionProcessor->changeSolver(solver);
 
-    return 0;
+        while (missionProcessor->hasNext()) {
+            if (!missionProcessor->step()) {
+                throw std::runtime_error("mission step failed");
+            }
+        }
+    }
+    catch (const std::exception &e) {
+        std::cerr << "Error during mission processor: " << e.what() << '\n';
+        result = 1;
+    }
+
+    std::cout << "Steps count: " << missionProcessor->getCurrentStep() << '\n';
+
+    delete configLoader;      // NOLINT(cppcoreguidelines-owning-memory)
+    delete configOptions;     // NOLINT(cppcoreguidelines-owning-memory)
+    delete targets;           // NOLINT(cppcoreguidelines-owning-memory)
+    delete solver;            // NOLINT(cppcoreguidelines-owning-memory)
+    delete missionProcessor;  // NOLINT(cppcoreguidelines-owning-memory)
+
+    return result;
 }
