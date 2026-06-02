@@ -3,6 +3,7 @@
 #include "Target.hpp"
 #include "Drone.hpp"
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class IBallisticSolver {
   public:
     virtual float solve(Drone drone, Target target) = 0;

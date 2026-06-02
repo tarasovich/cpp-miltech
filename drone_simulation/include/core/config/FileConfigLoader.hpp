@@ -7,8 +7,10 @@
 
 namespace fs = std::filesystem;
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class FileConfigLoader : public IConfigLoader {
 public:
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     explicit FileConfigLoader(const std::string &mainPath, const std::string &ammoPath)
         : mainPath(mainPath)
         , ammoPath(ammoPath)
@@ -46,8 +48,29 @@ public:
     }
 
 protected:
-    Config *resultConfig = nullptr;
-    AmmoParams *resultAmmoParams = nullptr;
+    Config* initResultConfig()
+    {
+        if (resultConfig != nullptr) {
+            throw std::logic_error("FileConfigLoader::initResultConfig(): resultConfig already initialized");
+        }
+
+        // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
+        resultConfig = new Config();
+
+        return resultConfig;
+    }
+
+    AmmoParams* initResultAmmoParams(const uint8_t ammoCount)
+    {
+        if (resultAmmoParams != nullptr) {
+            throw std::logic_error("FileConfigLoader::initResultAmmoParams(): resultAmmoParams already initialized");
+        }
+
+        // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
+        resultAmmoParams = new AmmoParams[ammoCount];
+
+        return resultAmmoParams;
+    }
 
     virtual bool parseMainConfig(const fs::path &filePath) = 0;
     virtual bool parseAmmoConfig(const fs::path &filePath) = 0;
@@ -56,6 +79,9 @@ private:
     bool isLoaded = false;
     fs::path mainPath;
     fs::path ammoPath;
+
+    Config *resultConfig = nullptr;
+    AmmoParams *resultAmmoParams = nullptr;
 
     void requireLoad() const
     {

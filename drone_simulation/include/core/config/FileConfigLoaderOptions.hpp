@@ -2,13 +2,13 @@
 #define DRONE_SIMULATION_FILECONFIGLOADEROPTIONS_HPP
 #include "IConfigLoaderOptions.hpp"
 #include <string>
-
-
+#include <utility>
 
 class FileConfigLoaderOptions : public IConfigLoaderOptions {
 public:
-    FileConfigLoaderOptions(const std::string& dir, const std::string& mainName, const std::string& ammoName)
-        : dir(dir), mainName(mainName), ammoName(ammoName) {}
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+    FileConfigLoaderOptions(std::string  dir, std::string  mainName, std::string  ammoName)
+        : dir(std::move(dir)), mainName(std::move(mainName)), ammoName(std::move(ammoName)) {}
 
     const std::string& getDir() const { return dir; }
     const std::string& getMainName() const { return mainName; }

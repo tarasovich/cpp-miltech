@@ -3,8 +3,9 @@
 #include "ITargetProvider.hpp"
 #include "JsonTargetProvider.hpp"
 
-enum class ProviderType { JSON };
+enum class ProviderType : std::uint8_t { JSON };
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class TargetProviderFactory {
 public:
     ~TargetProviderFactory() = default;
@@ -13,6 +14,7 @@ public:
     {
         switch (type) {
             case ProviderType::JSON:
+                // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
                 return new JsonTargetProvider(jsonPath);
             default:
                 throw std::invalid_argument("TargetProviderFactory::create(): Unsupported provider type");

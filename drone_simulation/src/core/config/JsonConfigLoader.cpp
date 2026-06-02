@@ -10,18 +10,18 @@ using json = nlohmann::json;
 
 void from_json(const json &j, Config &config)
 {
-    j["drone"]["position"]["x"].get_to(config.startPos.x);
-    j["drone"]["position"]["y"].get_to(config.startPos.y);
-    j["drone"]["altitude"].get_to(config.altitude);
-    j["drone"]["initialDirection"].get_to(config.initialDir);
-    j["drone"]["attackSpeed"].get_to(config.attackSpeed);
-    j["drone"]["accelerationPath"].get_to(config.accelPath);
-    j["drone"]["angularSpeed"].get_to(config.angularSpeed);
-    j["drone"]["turnThreshold"].get_to(config.turnThreshold);
-    j["simulation"]["timeStep"].get_to(config.simTimeStep);
-    j["simulation"]["hitRadius"].get_to(config.hitRadius);
-    j["targetArrayTimeStep"].get_to(config.arrayTimeStep);
-    j["ammo"].get_to(config.ammoName);
+    j.at("drone").at("position").at("x").get_to(config.startPos.x);
+    j.at("drone").at("position").at("y").get_to(config.startPos.y);
+    j.at("drone").at("altitude").get_to(config.altitude);
+    j.at("drone").at("initialDirection").get_to(config.initialDir);
+    j.at("drone").at("attackSpeed").get_to(config.attackSpeed);
+    j.at("drone").at("accelerationPath").get_to(config.accelPath);
+    j.at("drone").at("angularSpeed").get_to(config.angularSpeed);
+    j.at("drone").at("turnThreshold").get_to(config.turnThreshold);
+    j.at("simulation").at("timeStep").get_to(config.simTimeStep);
+    j.at("simulation").at("hitRadius").get_to(config.hitRadius);
+    j.at("targetArrayTimeStep").get_to(config.arrayTimeStep);
+    j.at("ammo").get_to(config.ammoName);
 }
 
 void from_json(const json &j, AmmoParams &ammo)
@@ -40,16 +40,13 @@ bool JsonConfigLoader::parseMainConfig(const fs::path& filePath)
         throw std::invalid_argument("JsonConfigLoader::parseMainConfig(): Failed to open " + filePath.string());
     }
 
-    resultConfig = new Config;
+    auto *result = initResultConfig();
 
     json jc{};
     try {
         fstream >> jc;
-        jc.get_to(*resultConfig);
+        jc.get_to(*result);
     } catch (const json::exception& e) {
-        delete resultConfig;
-        resultConfig = nullptr;
-
         throw std::invalid_argument(
             "JsonConfigLoader::parseMainConfig(): Failed to parse " + filePath.string() + ":\n" + e.what()
         );
@@ -75,16 +72,16 @@ bool JsonConfigLoader::parseAmmoConfig(const fs::path& filePath)
         );
     }
 
-    const int ammoCount{static_cast<int>(jc.size())};
+    const uint8_t ammoCount{static_cast<uint8_t>(jc.size())};
     if (ammoCount < 1) {
         throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): No ammos in " + filePath.string());
     }
 
-    resultAmmoParams = new AmmoParams[ammoCount];
+    auto *result = this->initResultAmmoParams(ammoCount);
 
     try {
-        for (int i = 0; i < ammoCount; i++) {
-            resultAmmoParams[i] = jc[i].get<AmmoParams>();
+        for (uint8_t i = 0; i < ammoCount; i++) {
+            result[i] = jc.at(i).get<AmmoParams>();
         }
     } catch (const json::exception& e) {
         throw std::invalid_argument(

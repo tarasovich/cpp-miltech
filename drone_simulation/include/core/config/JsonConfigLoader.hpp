@@ -4,12 +4,14 @@
 
 #include <fstream>
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class JsonConfigLoader : public FileConfigLoader {
 protected:
     bool parseMainConfig(const fs::path &filePath) override;
     bool parseAmmoConfig(const fs::path &filePath) override;
 
 public:
+    ~JsonConfigLoader() override = default;
     explicit JsonConfigLoader(const std::string &mainPath = "config.json", const std::string &ammoPath = "ammo.json")
         : FileConfigLoader{mainPath, ammoPath}
     {

@@ -6,6 +6,7 @@
 #include "IConfigLoaderOptions.hpp"
 #include "JsonConfigLoader.hpp"
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ConfigLoaderFactory {
 public:
     virtual ~ConfigLoaderFactory() = default;
@@ -14,6 +15,7 @@ public:
         if (const auto* fileOptions = dynamic_cast<const FileConfigLoaderOptions*>(&options)) {
             if (fileOptions->getMainName().ends_with(".json") || fileOptions->getAmmoName().ends_with(".json")) {
                 const fs::path dir = fileOptions->getDir();
+                // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
                 return new JsonConfigLoader(dir / fileOptions->getMainName(), dir / fileOptions->getAmmoName());
             }
         }

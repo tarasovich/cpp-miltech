@@ -3,6 +3,7 @@
 #include "AmmoParams.hpp"
 #include "Config.hpp"
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class IConfigLoader {
 public:
     virtual bool load() = 0;
