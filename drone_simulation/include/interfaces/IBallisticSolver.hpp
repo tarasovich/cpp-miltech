@@ -5,7 +5,7 @@
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class IBallisticSolver {
-  public:
+public:
     virtual float solve(Drone drone, Target target) = 0;
     virtual ~IBallisticSolver() = default;
 };

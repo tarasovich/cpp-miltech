@@ -7,8 +7,12 @@
 class FileConfigLoaderOptions : public IConfigLoaderOptions {
 public:
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-    FileConfigLoaderOptions(std::string  dir, std::string  mainName, std::string  ammoName)
-        : dir(std::move(dir)), mainName(std::move(mainName)), ammoName(std::move(ammoName)) {}
+    FileConfigLoaderOptions(std::string dir, std::string mainName, std::string ammoName)
+        : dir(std::move(dir))
+        , mainName(std::move(mainName))
+        , ammoName(std::move(ammoName))
+    {
+    }
 
     const std::string& getDir() const { return dir; }
     const std::string& getMainName() const { return mainName; }

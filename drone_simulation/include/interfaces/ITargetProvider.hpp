@@ -1,6 +1,8 @@
 #ifndef DRONE_SIMULATION_ITARGETPROVIDER_HPP
 #define DRONE_SIMULATION_ITARGETPROVIDER_HPP
 #include "Target.hpp"
+#include <iostream>
+#include <cstdint>
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ITargetProvider {

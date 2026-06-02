@@ -10,7 +10,7 @@ class TargetProviderFactory {
 public:
     ~TargetProviderFactory() = default;
 
-    static ITargetProvider* create(const ProviderType type, const std::string &jsonPath)
+    static ITargetProvider* create(const ProviderType type, const std::string& jsonPath)
     {
         switch (type) {
             case ProviderType::JSON:
@@ -20,7 +20,6 @@ public:
                 throw std::invalid_argument("TargetProviderFactory::create(): Unsupported provider type");
         }
     }
-
 };
 
 #endif  // DRONE_SIMULATION_TARGETPROVIDERFACTORY_HPP

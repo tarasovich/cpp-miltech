@@ -51,30 +51,32 @@ int main(const int argc, char *argv[])
     IConfigLoader *configLoader = nullptr;
     try {
         configLoader = ConfigLoaderFactory::create(*configOptions);
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e) {
         std::cerr << "Error creating config loader: " << e.what() << '\n';
-        delete configOptions; // NOLINT(cppcoreguidelines-owning-memory)
+        delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
         return 1;
     }
 
-
     try {
         configLoader->load();
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e) {
         std::cerr << "Error loading configuration: " << e.what() << '\n';
-        delete configLoader; // NOLINT(cppcoreguidelines-owning-memory)
-        delete configOptions; // NOLINT(cppcoreguidelines-owning-memory)
+        delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
+        delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
         return 1;
     }
 
     const ITargetProvider *targets = nullptr;
     try {
         targets = TargetProviderFactory::create(ProviderType::JSON, dataDir + "/" + targetsFilename);
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e) {
         std::cerr << "Error loading targets: " << e.what() << '\n';
-        delete configLoader; // NOLINT(cppcoreguidelines-owning-memory)
-        delete configOptions; // NOLINT(cppcoreguidelines-owning-memory)
-        delete targets; // NOLINT(cppcoreguidelines-owning-memory)
+        delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
+        delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
+        delete targets;        // NOLINT(cppcoreguidelines-owning-memory)
         return 1;
     }
 
@@ -85,9 +87,9 @@ int main(const int argc, char *argv[])
     std::cout << *ammoParams << '\n';
     std::cout << *targets << '\n';
 
-    delete configLoader; // NOLINT(cppcoreguidelines-owning-memory)
-    delete configOptions; // NOLINT(cppcoreguidelines-owning-memory)
-    delete targets; // NOLINT(cppcoreguidelines-owning-memory)
+    delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
+    delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
+    delete targets;        // NOLINT(cppcoreguidelines-owning-memory)
 
     return 0;
 }

@@ -4,6 +4,7 @@
 #include "IConfigLoader.hpp"
 #include <filesystem>
 #include <iostream>
+#include <cstdint>
 
 namespace fs = std::filesystem;
 
@@ -48,7 +49,7 @@ public:
     }
 
 protected:
-    Config* initResultConfig()
+    Config *initResultConfig()
     {
         if (resultConfig != nullptr) {
             throw std::logic_error("FileConfigLoader::initResultConfig(): resultConfig already initialized");
@@ -60,7 +61,7 @@ protected:
         return resultConfig;
     }
 
-    AmmoParams* initResultAmmoParams(const uint8_t ammoCount)
+    AmmoParams *initResultAmmoParams(const uint8_t ammoCount)
     {
         if (resultAmmoParams != nullptr) {
             throw std::logic_error("FileConfigLoader::initResultAmmoParams(): resultAmmoParams already initialized");

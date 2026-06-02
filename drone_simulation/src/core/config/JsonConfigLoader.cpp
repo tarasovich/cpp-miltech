@@ -1,7 +1,7 @@
 // To create better diagnostics messages, each JSON value needs a pointer to its parent value such that a global context (i.e., a path from
 // the root value to the value that led to the exception) can be created. They can, however, be enabled by defining the preprocessor symbol
 // JSON_DIAGNOSTICS to 1 before including json.hpp.
-#define JSON_DIAGNOSTICS 1 // NOLINT (consider using a 'constexpr' constant )
+#define JSON_DIAGNOSTICS 1  // NOLINT (consider using a 'constexpr' constant )
 #include "json.hpp"
 #include "JsonConfigLoader.hpp"
 #include <fstream>
@@ -32,7 +32,7 @@ void from_json(const json &j, AmmoParams &ammo)
     j.at("lift").get_to(ammo.lift);
 }
 
-bool JsonConfigLoader::parseMainConfig(const fs::path& filePath)
+bool JsonConfigLoader::parseMainConfig(const fs::path &filePath)
 {
     std::ifstream fstream(filePath);
 
@@ -46,16 +46,15 @@ bool JsonConfigLoader::parseMainConfig(const fs::path& filePath)
     try {
         fstream >> jc;
         jc.get_to(*result);
-    } catch (const json::exception& e) {
-        throw std::invalid_argument(
-            "JsonConfigLoader::parseMainConfig(): Failed to parse " + filePath.string() + ":\n" + e.what()
-        );
+    }
+    catch (const json::exception &e) {
+        throw std::invalid_argument("JsonConfigLoader::parseMainConfig(): Failed to parse " + filePath.string() + ":\n" + e.what());
     }
 
     return true;
 }
 
-bool JsonConfigLoader::parseAmmoConfig(const fs::path& filePath)
+bool JsonConfigLoader::parseAmmoConfig(const fs::path &filePath)
 {
     std::ifstream fstream(filePath);
 
@@ -66,10 +65,9 @@ bool JsonConfigLoader::parseAmmoConfig(const fs::path& filePath)
     json jc{};
     try {
         fstream >> jc;
-    } catch (const json::exception& e) {
-        throw std::invalid_argument(
-            "JsonConfigLoader::parseAmmoConfig(): Failed to parse " + filePath.string() + ":\n" + e.what()
-        );
+    }
+    catch (const json::exception &e) {
+        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): Failed to parse " + filePath.string() + ":\n" + e.what());
     }
 
     const uint8_t ammoCount{static_cast<uint8_t>(jc.size())};
@@ -83,10 +81,9 @@ bool JsonConfigLoader::parseAmmoConfig(const fs::path& filePath)
         for (uint8_t i = 0; i < ammoCount; i++) {
             result[i] = jc.at(i).get<AmmoParams>();
         }
-    } catch (const json::exception& e) {
-        throw std::invalid_argument(
-            "JsonConfigLoader::parseAmmoConfig(): Failed to parse " + filePath.string() + ":\n" + e.what()
-        );
+    }
+    catch (const json::exception &e) {
+        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): Failed to parse " + filePath.string() + ":\n" + e.what());
     }
 
     return true;

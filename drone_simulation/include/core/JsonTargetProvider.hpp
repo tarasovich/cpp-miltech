@@ -4,6 +4,7 @@
 #include "ITargetProvider.hpp"
 #include <iostream>
 #include <utility>
+#include <cstdint>
 
 namespace fs = std::filesystem;
 
@@ -20,7 +21,8 @@ public:
 
     uint8_t getTargetCount() const override { return targetCount; }
 
-    Target getTarget(const uint8_t index) const override {
+    Target getTarget(const uint8_t index) const override
+    {
         if (index >= targetCount) {
             throw std::out_of_range("JsonTargetProvider::getTarget(): Index out of bounds");
         }
@@ -28,12 +30,13 @@ public:
         return *targets[index];
     }
 
-    ~JsonTargetProvider() override {
+    ~JsonTargetProvider() override
+    {
         std::cout << "JsonTargetProvider destroy\n";
 
         if (targetCount > 0) {
             for (uint8_t i = 0; i < targetCount; i++) {
-                delete[] targets[i];
+                delete[] targets[i];  // NOLINT(cppcoreguidelines-owning-memory)
             }
             delete[] targets;
         }
