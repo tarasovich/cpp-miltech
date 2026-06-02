@@ -3,6 +3,8 @@
 #include "AmmoParams.hpp"
 #include "Config.hpp"
 
+namespace miltech::simulation {
+
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class IConfigLoader {
 public:
@@ -11,5 +13,7 @@ public:
     virtual AmmoParams *getAmmoParams() const = 0;
     virtual ~IConfigLoader() = default;
 };
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_ICONFIGLOADER_HPP

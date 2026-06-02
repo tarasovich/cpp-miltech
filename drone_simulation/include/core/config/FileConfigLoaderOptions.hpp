@@ -4,6 +4,8 @@
 #include <string>
 #include <utility>
 
+namespace miltech::simulation {
+
 class FileConfigLoaderOptions : public IConfigLoaderOptions {
 public:
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
@@ -23,5 +25,7 @@ private:
     std::string mainName_;
     std::string ammoName_;
 };
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_FILECONFIGLOADEROPTIONS_HPP

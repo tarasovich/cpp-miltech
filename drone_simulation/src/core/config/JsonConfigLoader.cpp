@@ -8,6 +8,8 @@
 
 using json = nlohmann::json;
 
+namespace miltech::simulation {
+
 void from_json(const json &j, Config &config)
 {
     j.at("drone").at("position").at("x").get_to(config.startPos.x);
@@ -103,3 +105,5 @@ bool JsonConfigLoader::parse()
 
     return true;
 }
+
+}  // namespace miltech::simulation

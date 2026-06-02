@@ -7,6 +7,9 @@
 #include "MissionProcessor.hpp"
 #include "TargetProviderFactory.hpp"
 #include <cstring>
+
+using namespace miltech::simulation;
+
 // ============================================================
 // Usage
 // ============================================================

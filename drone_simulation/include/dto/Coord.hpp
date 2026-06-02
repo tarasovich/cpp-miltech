@@ -7,6 +7,8 @@
 // Координата у 2D (або 3D для дрона). Зберігає x, y (та опціонально z).
 // Ця структура має перевантажені оператори
 
+namespace miltech::simulation {
+
 struct Coord {
     float x;
     float y;
@@ -60,5 +62,7 @@ struct Coord {
         return result;
     }
 };
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_COORD_HPP

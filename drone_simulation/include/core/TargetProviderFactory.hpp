@@ -3,6 +3,8 @@
 #include "ITargetProvider.hpp"
 #include "JsonTargetProvider.hpp"
 
+namespace miltech::simulation {
+
 enum class ProviderType : std::uint8_t { JSON };
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
@@ -21,5 +23,7 @@ public:
         }
     }
 };
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_TARGETPROVIDERFACTORY_HPP

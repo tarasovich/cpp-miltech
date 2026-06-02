@@ -8,6 +8,8 @@
 // AmmoParams - Параметри одного типу боєприпасу.
 // ============================================================
 
+namespace miltech::simulation {
+
 struct AmmoParams {
     std::string name;  // name
     float mass;        // маса (кг)
@@ -24,5 +26,7 @@ inline std::ostream& operator<<(std::ostream& os, const AmmoParams& ammo)
        << "  lift: " << ammo.lift << "\n";
     return os;
 }
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_AMMOPARAMS_HPP

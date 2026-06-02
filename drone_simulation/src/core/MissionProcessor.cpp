@@ -1,5 +1,7 @@
 #include "MissionProcessor.hpp"
 
+namespace miltech::simulation {
+
 void MissionProcessor::doInit(IConfigLoader*& configLoader, const ITargetProvider*& targets)
 {
     configLoader->load();
@@ -41,3 +43,5 @@ bool MissionProcessor::doStep()
     ++currentStep_;
     return true;
 }
+
+}  // namespace miltech::simulation

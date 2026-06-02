@@ -5,6 +5,8 @@
 #include "AnalyticalSolver.hpp"
 #include <cstdint>
 
+namespace miltech::simulation {
+
 enum class SolverType : std::uint8_t { ANALYTICAL };
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
@@ -23,5 +25,7 @@ public:
         }
     }
 };
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_BALLISTICSOLVERFACTORY_HPP

@@ -5,6 +5,8 @@
 #include <filesystem>
 #include <iostream>
 
+namespace miltech::simulation {
+
 namespace fs = std::filesystem;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
@@ -106,4 +108,7 @@ private:
         }
     }
 };
+
+}  // namespace miltech::simulation
+
 #endif  // DRONE_SIMULATION_FILECONFIGLOADER_HPP

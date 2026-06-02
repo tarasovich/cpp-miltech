@@ -5,6 +5,8 @@
 #include "IConfigLoader.hpp"
 #include "ITargetProvider.hpp"
 
+namespace miltech::simulation {
+
 // ============================================================
 // Стани дрона (enum)
 // ============================================================
@@ -119,5 +121,7 @@ private:
     bool doHasNext() const;
     bool doStep();
 };
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_MISSIONPROCESSOR_HPP

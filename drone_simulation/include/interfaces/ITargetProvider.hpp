@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cstdint>
 
+namespace miltech::simulation {
+
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ITargetProvider {
 public:
@@ -19,5 +21,7 @@ inline std::ostream& operator<<(std::ostream& os, const ITargetProvider& targetP
 
     return os;
 }
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_ITARGETPROVIDER_HPP

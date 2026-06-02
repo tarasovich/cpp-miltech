@@ -8,6 +8,8 @@
 
 using json = nlohmann::json;
 
+namespace miltech::simulation {
+
 bool JsonTargetProvider::load()
 {
     std::ifstream fstream(this->jsonPath_);
@@ -42,3 +44,5 @@ bool JsonTargetProvider::load()
 
     return true;
 }
+
+}  // namespace miltech::simulation

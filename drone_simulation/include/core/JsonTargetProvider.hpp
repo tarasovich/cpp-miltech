@@ -6,6 +6,8 @@
 #include <utility>
 #include <cstdint>
 
+namespace miltech::simulation {
+
 namespace fs = std::filesystem;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
@@ -54,5 +56,7 @@ private:
 
     bool load();
 };
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_JSONTARGETPROVIDER_HPP

@@ -8,6 +8,9 @@
 // ============================================================
 // Config - Початкові дані симуляції
 // ============================================================
+
+namespace miltech::simulation {
+
 struct Config {
     Coord startPos;        // початкова позиція (x, y)
     float altitude;        // висота
@@ -39,5 +42,7 @@ inline std::ostream& operator<<(std::ostream& os, const Config& config)
 
     return os;
 }
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_CONFIG_HPP

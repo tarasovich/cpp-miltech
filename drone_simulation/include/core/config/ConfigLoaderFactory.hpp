@@ -6,6 +6,8 @@
 #include "IConfigLoaderOptions.hpp"
 #include "JsonConfigLoader.hpp"
 
+namespace miltech::simulation {
+
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ConfigLoaderFactory {
 public:
@@ -23,5 +25,7 @@ public:
         throw std::invalid_argument("ConfigLoaderFactory::create(): Unsupported config loader options");
     }
 };
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_CONFIGLOADERFACTORY_HPP

@@ -4,6 +4,8 @@
 #include "Coord.hpp"
 #include "IBallisticSolver.hpp"
 
+namespace miltech::simulation {
+
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class AnalyticalSolver : public IBallisticSolver {
 public:
@@ -16,5 +18,7 @@ private:
     static float calculateBombFallTime(const Config &config, const AmmoParams &ammo);
     static float calculateBombFlightDistance(const Config &config, const AmmoParams &ammo);
 };
+
+}  // namespace miltech::simulation
 
 #endif  // DRONE_SIMULATION_ANALYTICALSOLVER_HPP

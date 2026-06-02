@@ -4,6 +4,8 @@
 
 #include <fstream>
 
+namespace miltech::simulation {
+
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class JsonConfigLoader : public FileConfigLoader {
 protected:
@@ -16,4 +18,7 @@ public:
     {
     }
 };
+
+}  // namespace miltech::simulation
+
 #endif  // DRONE_SIMULATION_JSONCONFIGLOADER_HPP

@@ -1,6 +1,8 @@
 #include "AnalyticalSolver.hpp"
 #include <cmath>
 
+namespace miltech::simulation {
+
 Coord AnalyticalSolver::solve(const Coord &dronePos, const Coord &targetPos, const Config &config, const AmmoParams &ammo)
 {
     float tgtDist = std::sqrt(std::pow(targetPos.x - dronePos.x, 2.0f) + std::pow(targetPos.y - dronePos.y, 2.0f));
@@ -99,3 +101,5 @@ float AnalyticalSolver::calculateBombFlightDistance(const Config &config, const 
 
     return hDist;
 }
+
+}  // namespace miltech::simulation
