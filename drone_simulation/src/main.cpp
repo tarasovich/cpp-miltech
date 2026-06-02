@@ -1,5 +1,7 @@
+#include "BallisticSolverFactory.hpp"
 #include "ConfigLoaderFactory.hpp"
 #include "FileConfigLoaderOptions.hpp"
+#include "IBallisticSolver.hpp"
 #include "ITargetProvider.hpp"
 #include "JsonConfigLoader.hpp"
 #include "TargetProviderFactory.hpp"
@@ -87,9 +89,25 @@ int main(const int argc, char *argv[])
     std::cout << *ammoParams << '\n';
     std::cout << *targets << '\n';
 
+    IBallisticSolver *solver = nullptr;
+    try {
+        solver = BallisticSolverFactory::create(SolverType::ANALYTICAL);
+    }
+    catch (const std::exception &e) {
+        std::cerr << "Error creating ballistic solver: " << e.what() << '\n';
+        delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
+        delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
+        delete targets;        // NOLINT(cppcoreguidelines-owning-memory)
+        return 1;
+    }
+
+    const Coord ballistic = solver->solve(config->startPos, targets->getTarget(0).pos, *config, ammoParams[0]);
+    std::cout << "Ballistic solution for target 0: (" << ballistic.x << ", " << ballistic.y << ")\n";
+
     delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
     delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
     delete targets;        // NOLINT(cppcoreguidelines-owning-memory)
+    delete solver;         // NOLINT(cppcoreguidelines-owning-memory)
 
     return 0;
 }

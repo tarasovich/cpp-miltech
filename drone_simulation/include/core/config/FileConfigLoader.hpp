@@ -4,7 +4,6 @@
 #include "IConfigLoader.hpp"
 #include <filesystem>
 #include <iostream>
-#include <cstdint>
 
 namespace fs = std::filesystem;
 
@@ -18,7 +17,20 @@ public:
     {
     }
 
-    bool load() override;
+    bool load() override
+    {
+        if (this->isLoaded) {
+            throw std::logic_error("FileConfigLoader::load(): already loaded");
+        }
+
+        if (!this->parse()) {
+            throw std::invalid_argument("FileConfigLoader::load(): could not load " + this->getMainPath().string());
+        }
+
+        this->isLoaded = true;
+
+        return this->isLoaded;
+    }
 
     fs::path getMainPath() const { return this->mainPath; }
     fs::path getAmmoPath() const { return this->ammoPath; }
@@ -41,11 +53,15 @@ public:
     {
         std::cout << "destroy FileConfigLoader\n";
 
-        delete resultConfig;
-        resultConfig = nullptr;
+        if (resultConfig != nullptr) {
+            delete resultConfig;
+            resultConfig = nullptr;
+        }
 
-        delete[] resultAmmoParams;
-        resultAmmoParams = nullptr;
+        if (resultAmmoParams != nullptr) {
+            delete resultAmmoParams;
+            resultAmmoParams = nullptr;
+        }
     }
 
 protected:
@@ -61,20 +77,19 @@ protected:
         return resultConfig;
     }
 
-    AmmoParams *initResultAmmoParams(const uint8_t ammoCount)
+    AmmoParams *initResultAmmoParams()
     {
         if (resultAmmoParams != nullptr) {
             throw std::logic_error("FileConfigLoader::initResultAmmoParams(): resultAmmoParams already initialized");
         }
 
         // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-        resultAmmoParams = new AmmoParams[ammoCount];
+        resultAmmoParams = new AmmoParams;
 
         return resultAmmoParams;
     }
 
-    virtual bool parseMainConfig(const fs::path &filePath) = 0;
-    virtual bool parseAmmoConfig(const fs::path &filePath) = 0;
+    virtual bool parse() = 0;
 
 private:
     bool isLoaded = false;

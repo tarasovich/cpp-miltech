@@ -7,8 +7,7 @@
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class JsonConfigLoader : public FileConfigLoader {
 protected:
-    bool parseMainConfig(const fs::path &filePath) override;
-    bool parseAmmoConfig(const fs::path &filePath) override;
+    bool parse() override;
 
 public:
     ~JsonConfigLoader() override = default;

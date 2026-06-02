@@ -32,58 +32,73 @@ void from_json(const json &j, AmmoParams &ammo)
     j.at("lift").get_to(ammo.lift);
 }
 
-bool JsonConfigLoader::parseMainConfig(const fs::path &filePath)
+bool JsonConfigLoader::parse()
 {
-    std::ifstream fstream(filePath);
+    // ------------------------
+    // Parse main config.json
+    // ------------------------
+    const fs::path &mainPath = this->getMainPath();
+    auto *resultConfig = initResultConfig();
 
-    if (!fstream.is_open()) {
-        throw std::invalid_argument("JsonConfigLoader::parseMainConfig(): Failed to open " + filePath.string());
-    }
-
-    auto *result = initResultConfig();
-
-    json jc{};
     try {
+        std::ifstream fstream(mainPath);
+
+        if (!fstream.is_open()) {
+            throw std::invalid_argument("JsonConfigLoader::parseMainConfig(): Failed to open " + mainPath.string());
+        }
+
+        json jc{};
         fstream >> jc;
-        jc.get_to(*result);
+        jc.get_to(*resultConfig);
     }
     catch (const json::exception &e) {
-        throw std::invalid_argument("JsonConfigLoader::parseMainConfig(): Failed to parse " + filePath.string() + ":\n" + e.what());
+        throw std::invalid_argument("JsonConfigLoader::parseMainConfig(): Failed to parse " + mainPath.string() + ":\n" + e.what());
     }
 
-    return true;
-}
-
-bool JsonConfigLoader::parseAmmoConfig(const fs::path &filePath)
-{
-    std::ifstream fstream(filePath);
-
-    if (!fstream.is_open()) {
-        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): Failed to open " + filePath.string());
-    }
-
+    // ------------------------
+    // Parse ammo.json
+    // ------------------------
+    const fs::path &ammoPath = this->getAmmoPath();
     json jc{};
+
     try {
+        std::ifstream fstream(ammoPath);
+
+        if (!fstream.is_open()) {
+            throw std::invalid_argument("Could not open file");
+        }
+
         fstream >> jc;
     }
-    catch (const json::exception &e) {
-        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): Failed to parse " + filePath.string() + ":\n" + e.what());
+    catch (const std::exception &e) {
+        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): Failed to parse " + ammoPath.string() + ":\n" + e.what());
     }
 
     const uint8_t ammoCount{static_cast<uint8_t>(jc.size())};
     if (ammoCount < 1) {
-        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): No ammos in " + filePath.string());
+        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): No ammos in " + ammoPath.string());
     }
 
-    auto *result = this->initResultAmmoParams(ammoCount);
+    auto *resultAmmo = this->initResultAmmoParams();
+    bool isAmmoFound{false};
 
     try {
         for (uint8_t i = 0; i < ammoCount; i++) {
-            result[i] = jc.at(i).get<AmmoParams>();
+            const auto &ammo{jc.at(i)};
+            if (ammo.at("name") == resultConfig->ammoName) {
+                ammo.get_to(*resultAmmo);
+                isAmmoFound = true;
+                break;
+            }
         }
     }
     catch (const json::exception &e) {
-        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): Failed to parse " + filePath.string() + ":\n" + e.what());
+        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): Failed to parse " + ammoPath.string() + ":\n" + e.what());
+    }
+
+    if (!isAmmoFound) {
+        throw std::invalid_argument("JsonConfigLoader::parseAmmoConfig(): No ammo with name \"" + resultConfig->ammoName + "\" in " +
+                                    ammoPath.string());
     }
 
     return true;

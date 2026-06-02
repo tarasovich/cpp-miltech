@@ -1,13 +1,17 @@
 #ifndef DRONE_SIMULATION_IBALLISTICSOLVER_HPP
 #define DRONE_SIMULATION_IBALLISTICSOLVER_HPP
-#include "Target.hpp"
-#include "Drone.hpp"
+
+#include "Coord.hpp"
+#include "Config.hpp"
+#include "AmmoParams.hpp"
+
+constexpr float M_GI = 9.81;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class IBallisticSolver {
 public:
-    virtual float solve(Drone drone, Target target) = 0;
     virtual ~IBallisticSolver() = default;
+    virtual Coord solve(const Coord &dronePos, const Coord &targetPos, const Config &config, const AmmoParams &ammo) = 0;
 };
 
 #endif  // DRONE_SIMULATION_IBALLISTICSOLVER_HPP
