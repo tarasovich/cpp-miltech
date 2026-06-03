@@ -1,5 +1,5 @@
-#ifndef DRONE_SIMULATION_ANALYTICALSOLVER_HPP
-#define DRONE_SIMULATION_ANALYTICALSOLVER_HPP
+#pragma once
+
 #include "Config.hpp"
 #include "Coord.hpp"
 #include "IBallisticSolver.hpp"
@@ -20,5 +20,3 @@ private:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_ANALYTICALSOLVER_HPP

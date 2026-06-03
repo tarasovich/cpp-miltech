@@ -1,5 +1,5 @@
-#ifndef DRONE_SIMULATION_ITARGETPROVIDER_HPP
-#define DRONE_SIMULATION_ITARGETPROVIDER_HPP
+#pragma once
+
 #include "Target.hpp"
 #include <iostream>
 #include <cstdint>
@@ -23,5 +23,3 @@ inline std::ostream& operator<<(std::ostream& os, const ITargetProvider& targetP
 }
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_ITARGETPROVIDER_HPP

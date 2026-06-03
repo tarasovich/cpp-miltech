@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_IBALLISTICSOLVER_HPP
-#define DRONE_SIMULATION_IBALLISTICSOLVER_HPP
+#pragma once
 
 #include "Coord.hpp"
 #include "Config.hpp"
@@ -16,5 +15,3 @@ public:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_IBALLISTICSOLVER_HPP

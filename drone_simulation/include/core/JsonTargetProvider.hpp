@@ -1,5 +1,5 @@
-#ifndef DRONE_SIMULATION_JSONTARGETPROVIDER_HPP
-#define DRONE_SIMULATION_JSONTARGETPROVIDER_HPP
+#pragma once
+
 #include <filesystem>
 #include "ITargetProvider.hpp"
 #include <iostream>
@@ -58,5 +58,3 @@ private:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_JSONTARGETPROVIDER_HPP

@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_TARGET_HPP
-#define DRONE_SIMULATION_TARGET_HPP
+#pragma once
 
 #include "Coord.hpp"
 #include <cstdint>
@@ -12,5 +11,3 @@ struct Target {
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_TARGET_HPP

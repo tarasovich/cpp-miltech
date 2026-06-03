@@ -1,5 +1,5 @@
-#ifndef DRONE_SIMULATION_FILECONFIGLOADEROPTIONS_HPP
-#define DRONE_SIMULATION_FILECONFIGLOADEROPTIONS_HPP
+#pragma once
+
 #include "IConfigLoaderOptions.hpp"
 #include <string>
 #include <utility>
@@ -27,5 +27,3 @@ private:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_FILECONFIGLOADEROPTIONS_HPP

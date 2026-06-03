@@ -1,5 +1,5 @@
-#ifndef DRONE_SIMULATION_ICONFIGLOADER_HPP
-#define DRONE_SIMULATION_ICONFIGLOADER_HPP
+#pragma once
+
 #include "AmmoParams.hpp"
 #include "Config.hpp"
 
@@ -15,5 +15,3 @@ public:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_ICONFIGLOADER_HPP

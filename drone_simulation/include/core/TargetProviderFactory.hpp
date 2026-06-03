@@ -1,5 +1,5 @@
-#ifndef DRONE_SIMULATION_TARGETPROVIDERFACTORY_HPP
-#define DRONE_SIMULATION_TARGETPROVIDERFACTORY_HPP
+#pragma once
+
 #include "ITargetProvider.hpp"
 #include "JsonTargetProvider.hpp"
 #include <cstdint>
@@ -26,5 +26,3 @@ public:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_TARGETPROVIDERFACTORY_HPP

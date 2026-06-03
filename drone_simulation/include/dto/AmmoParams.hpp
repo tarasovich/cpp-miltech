@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_AMMOPARAMS_HPP
-#define DRONE_SIMULATION_AMMOPARAMS_HPP
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -28,5 +27,3 @@ inline std::ostream& operator<<(std::ostream& os, const AmmoParams& ammo)
 }
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_AMMOPARAMS_HPP

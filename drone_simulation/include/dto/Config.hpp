@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_CONFIG_HPP
-#define DRONE_SIMULATION_CONFIG_HPP
+#pragma once
 
 #include "Coord.hpp"
 #include <string>
@@ -44,5 +43,3 @@ inline std::ostream& operator<<(std::ostream& os, const Config& config)
 }
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_CONFIG_HPP

@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_BALLISTICSOLUTION_HPP
-#define DRONE_SIMULATION_BALLISTICSOLUTION_HPP
+#pragma once
 
 #include "Coord.hpp"
 
@@ -17,5 +16,3 @@ struct BallisticSolution {
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_BALLISTICSOLUTION_HPP

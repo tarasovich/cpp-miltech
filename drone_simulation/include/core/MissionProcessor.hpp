@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_MISSIONPROCESSOR_HPP
-#define DRONE_SIMULATION_MISSIONPROCESSOR_HPP
+#pragma once
 
 #include "IBallisticSolver.hpp"
 #include "IConfigLoader.hpp"
@@ -143,5 +142,3 @@ private:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_MISSIONPROCESSOR_HPP

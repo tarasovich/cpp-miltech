@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_CONFIGLOADERFACTORY_HPP
-#define DRONE_SIMULATION_CONFIGLOADERFACTORY_HPP
+#pragma once
 
 #include "FileConfigLoaderOptions.hpp"
 #include "IConfigLoader.hpp"
@@ -27,5 +26,3 @@ public:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_CONFIGLOADERFACTORY_HPP

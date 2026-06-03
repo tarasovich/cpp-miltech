@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_COORD_HPP
-#define DRONE_SIMULATION_COORD_HPP
+#pragma once
 
 // ============================================================
 // Coord
@@ -64,5 +63,3 @@ struct Coord {
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_COORD_HPP
