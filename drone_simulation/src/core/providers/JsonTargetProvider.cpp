@@ -27,14 +27,16 @@ bool JsonTargetProvider::load()
     }
 
     try {
-        this->targetCount_ = jc.at("targetCount");
-        const uint8_t timeSteps = jc.at("timeSteps");
-        this->targets_ = new Target[this->targetCount_];  // NOLINT(cppcoreguidelines-owning-memory)
-        for (uint8_t i = 0; i < this->targetCount_; i++) {
-            this->targets_[i].timeSteps = timeSteps;
-            this->targets_[i].positions = new Coord[timeSteps];  // NOLINT(cppcoreguidelines-owning-memory)
-            for (uint8_t j = 0; j < timeSteps; j++) {
-                this->targets_[i].positions[j] = Coord{.x = jc.at("targets").at(i).at("positions").at(j).at("x"),
+        const auto targetCount = jc.at("targetCount").get<std::size_t>();
+        const auto timeSteps = jc.at("timeSteps").get<std::size_t>();
+
+        targets_.resize(targetCount);
+
+        for (size_t i = 0; i < targetCount; i++) {
+            targets_.at(i).positions.resize(timeSteps);
+
+            for (size_t j = 0; j < timeSteps; j++) {
+                targets_.at(i).positions.at(j) = Coord{.x = jc.at("targets").at(i).at("positions").at(j).at("x"),
                                                        .y = jc.at("targets").at(i).at("positions").at(j).at("y")};
             }
         }

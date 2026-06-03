@@ -19,36 +19,16 @@ public:
 
     fs::path getJsonPath() const { return jsonPath_; }
 
-    uint8_t getTargetCount() const override { return targetCount_; }
+    uint8_t getTargetCount() const override { return targets_.size(); }
 
-    Target getTarget(const uint8_t index) const override
-    {
-        if (index >= targetCount_) {
-            throw std::out_of_range("JsonTargetProvider::getTarget(): Index out of bounds");
-        }
+    Target getTarget(const uint8_t index) const override { return targets_.at(index); }
 
-        return targets_[index];
-    }
-
-    ~JsonTargetProvider() override
-    {
-        std::cout << "JsonTargetProvider::destructor\n";
-
-        if (targetCount_ > 0) {
-            for (uint8_t i = 0; i < targetCount_; i++) {
-                delete[] targets_[i].positions;  // NOLINT(cppcoreguidelines-owning-memory)
-            }
-            delete[] targets_;
-        }
-
-        targets_ = nullptr;
-    }
+    ~JsonTargetProvider() override = default;
 
 private:
     fs::path jsonPath_;
 
-    uint8_t targetCount_{0};
-    Target *targets_ = nullptr;
+    std::vector<Target> targets_;
 
     bool isLoaded_{false};
 

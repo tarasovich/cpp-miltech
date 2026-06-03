@@ -153,14 +153,14 @@ bool MissionProcessor::doStep()
 
         const auto target = targets_->getTarget(i);
         const float simPos = currentTime_ / config_->arrayTimeStep;
-        const auto tgtPosIdx = static_cast<uint8_t>(std::floor(simPos)) % target.timeSteps;
-        const auto prevPosIdx = static_cast<uint8_t>((tgtPosIdx + target.timeSteps - 1) % target.timeSteps);
+        const auto tgtPosIdx = static_cast<uint8_t>(std::floor(simPos)) % target.positions.size();
+        const auto prevPosIdx = static_cast<uint8_t>((tgtPosIdx + target.positions.size() - 1) % target.positions.size());
 
         // Вектор швидкості
-        const Coord velocity = (target.positions[tgtPosIdx] - target.positions[prevPosIdx]) * (1.0f / config_->arrayTimeStep);
+        const Coord velocity = (target.positions.at(tgtPosIdx) - target.positions.at(prevPosIdx)) * (1.0f / config_->arrayTimeStep);
         const float dt = (simPos - std::floor(simPos)) * config_->arrayTimeStep;
         // Поточна позиція цілі
-        const Coord targetPos = target.positions[tgtPosIdx] + velocity * dt;
+        const Coord targetPos = target.positions.at(tgtPosIdx) + velocity * dt;
 
         // Розрахувати орієнтовний час прильоту дрона до точки скиду (totalTime) для поточної позиції цілі
         const auto basicSolution = solver_->solve(curStep->pos, targetPos, *config_, *ammoParams_);

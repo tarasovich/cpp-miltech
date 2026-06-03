@@ -2,7 +2,7 @@
 
 #include <string>
 #include <iostream>
-#include <cstdint>
+#include <vector>
 
 namespace miltech::simulation {
 
@@ -107,8 +107,7 @@ struct BallisticSolution {
 // Ціль і її позиції
 // ============================================================
 struct Target {
-    uint8_t timeSteps;
-    Coord* positions;
+    std::vector<Coord> positions;
 };
 
 // ============================================================
