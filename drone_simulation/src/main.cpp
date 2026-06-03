@@ -185,8 +185,8 @@ int main(const int argc, char *argv[])
                 auto jo = json::object();
                 jo.emplace("totalSteps", missionProcessor->getStepsCount());
                 jo.emplace("steps", json::array());
-                for (uint16_t i = 0; i < missionProcessor->getStepsCount(); i++) {
-                    jo.at("steps").push_back(missionProcessor->getSteps()[i]);
+                for (const auto &step : missionProcessor->getSteps()) {
+                    jo.at("steps").push_back(step);
                 }
                 outFile << jo.dump(2) << '\n';
                 outFile.close();

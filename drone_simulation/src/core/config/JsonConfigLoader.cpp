@@ -85,8 +85,10 @@ bool JsonConfigLoader::parse()
     bool isAmmoFound{false};
 
     try {
-        for (uint8_t i = 0; i < ammoCount; i++) {
-            const auto &ammo{jc.at(i)};
+        // std::map або std::unordered_map — замість if/else ланцюжків для пошуку за ключем
+        // > не думаю що тут це реально актуально, ми читаємо по факту 1 раз і
+        // > витягуємо тільки потрібний AmmoParams
+        for (const auto &ammo : jc) {
             if (ammo.at("name") == resultConfig->ammoName) {
                 ammo.get_to(*resultAmmo);
                 isAmmoFound = true;
