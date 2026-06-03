@@ -34,10 +34,10 @@ struct SimStep {
     // int num; // крок
 };
 
-struct MissionData {
-    float fTime;     // час польоту снаряда
-    float hDist;     // дистанція польоту снаряда
-    float stepTurn;  // кут повороту за час симуляції
+struct MissionDerivedData {
+    float accel;      // прискорення дрону
+    float stepTurn;   // кут повороту за час симуляції
+    float hitRadius;  // радіус ураження
 };
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
@@ -118,6 +118,7 @@ private:
     const AmmoParams *ammoParams_ = nullptr;
     const ITargetProvider *targets_ = nullptr;
     IBallisticSolver *solver_ = nullptr;
+    MissionDerivedData derivedData_{};
 
     float baseTgtSwitchPenalty_{1.0f};
 
@@ -136,6 +137,9 @@ private:
     void doReset();
     bool doHasNext() const;
     bool doStep();
+
+    void initDerivedData();
+    SimStep *initStep(uint16_t stepIdx);
 };
 
 }  // namespace miltech::simulation
