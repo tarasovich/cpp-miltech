@@ -53,7 +53,7 @@ public:
 
     ~FileConfigLoader() override
     {
-        std::cout << "destroy FileConfigLoader\n";
+        std::cout << "FileConfigLoader::destructor\n";
 
         if (resultConfig_ != nullptr) {
             delete resultConfig_;

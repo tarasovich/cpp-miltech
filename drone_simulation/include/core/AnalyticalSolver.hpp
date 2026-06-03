@@ -12,11 +12,11 @@ public:
     ~AnalyticalSolver() override = default;
     AnalyticalSolver() = default;
 
-    Coord solve(const Coord &dronePos, const Coord &targetPos, const Config &config, const AmmoParams &ammo) override;
+    BallisticSolution solve(const Coord &dronePos, const Coord &targetPos, const Config &config, const AmmoParams &ammo) override;
 
 private:
     static float calculateBombFallTime(const Config &config, const AmmoParams &ammo);
-    static float calculateBombFlightDistance(const Config &config, const AmmoParams &ammo);
+    static float calculateBombFlightDistance(const Config &config, const AmmoParams &ammo, const float &fTime);
 };
 
 }  // namespace miltech::simulation

@@ -4,16 +4,15 @@
 #include "Coord.hpp"
 #include "Config.hpp"
 #include "AmmoParams.hpp"
+#include "BallisticSolution.hpp"
 
 namespace miltech::simulation {
-
-constexpr float M_GI = 9.81;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class IBallisticSolver {
 public:
     virtual ~IBallisticSolver() = default;
-    virtual Coord solve(const Coord &dronePos, const Coord &targetPos, const Config &config, const AmmoParams &ammo) = 0;
+    virtual BallisticSolution solve(const Coord &dronePos, const Coord &targetPos, const Config &config, const AmmoParams &ammo) = 0;
 };
 
 }  // namespace miltech::simulation

@@ -29,16 +29,16 @@ public:
             throw std::out_of_range("JsonTargetProvider::getTarget(): Index out of bounds");
         }
 
-        return *targets_[index];
+        return targets_[index];
     }
 
     ~JsonTargetProvider() override
     {
-        std::cout << "JsonTargetProvider destroy\n";
+        std::cout << "JsonTargetProvider::destructor\n";
 
         if (targetCount_ > 0) {
             for (uint8_t i = 0; i < targetCount_; i++) {
-                delete[] targets_[i];  // NOLINT(cppcoreguidelines-owning-memory)
+                delete[] targets_[i].positions;  // NOLINT(cppcoreguidelines-owning-memory)
             }
             delete[] targets_;
         }
@@ -47,10 +47,10 @@ public:
     }
 
 private:
-    fs::path jsonPath_{};
+    fs::path jsonPath_;
 
     uint8_t targetCount_{0};
-    Target **targets_ = nullptr;
+    Target *targets_ = nullptr;
 
     bool isLoaded_{false};
 

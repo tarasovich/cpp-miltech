@@ -22,16 +22,22 @@ enum class DroneState : uint8_t {
 // SimStep - Один крок симуляції для виведення.
 // ============================================================
 struct SimStep {
-    Coord pos;              // позиція дрона
-    float direction;        // напрямок (рад)
-    DroneState state;       // стан автомата (0-4)
-    int targetIdx;          // індекс поточної цілі
-    Coord dropPoint;        // точка скиду (куди летить дрон)
-    Coord aimPoint;         // куди впаде бомба (якщо скинути зараз)
-    Coord predictedTarget;  // прогнозована позиція цілі
-
+    Coord pos;                    // позиція дрона
+    float direction;              // напрямок (рад)
+    float speed;                  // поточна швидкість
+    DroneState state;             // стан автомата (0-4)
+    int targetIdx;                // індекс поточної цілі
+    BallisticSolution ballistic;  // балістичне рішення для кращої цілі кроку
+    Coord aimPoint;               // куди впаде бомба (якщо скинути зараз)
+    Coord predictedTarget;        // прогнозована позиція цілі
     // float time; // час
     // int num; // крок
+};
+
+struct MissionData {
+    float fTime;     // час польоту снаряда
+    float hDist;     // дистанція польоту снаряда
+    float stepTurn;  // кут повороту за час симуляції
 };
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
@@ -39,6 +45,8 @@ class MissionProcessor {
 public:
     ~MissionProcessor()
     {
+        std::cout << "MissionProcessor::destructor\n";
+
         if (steps_ != nullptr) {
             delete[] steps_;
             steps_ = nullptr;
@@ -92,6 +100,9 @@ public:
     }
 
     uint16_t getCurrentStep() const { return currentStep_; }
+    uint16_t getStepsCount() const { return getCurrentStep() + 1; }
+
+    const SimStep *getSteps() const { return steps_; }
 
 private:
     bool isInitialized_{false};
@@ -99,11 +110,12 @@ private:
     SimStep *steps_ = nullptr;
     float currentTime_{0.0f};
     uint16_t currentStep_{0};
+    bool isCompleted_{false};
 
     const Config *config_ = nullptr;
     const AmmoParams *ammoParams_ = nullptr;
     const ITargetProvider *targets_ = nullptr;
-    const IBallisticSolver *solver_ = nullptr;
+    IBallisticSolver *solver_ = nullptr;
 
     void requireInit() const
     {
