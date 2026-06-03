@@ -43,15 +43,7 @@ struct MissionDerivedData {
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class MissionProcessor {
 public:
-    ~MissionProcessor()
-    {
-        std::cout << "MissionProcessor::destructor\n";
-
-        if (steps_ != nullptr) {
-            delete[] steps_;
-            steps_ = nullptr;
-        }
-    }
+    ~MissionProcessor() = default;
 
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     explicit MissionProcessor(const uint16_t maxSteps = 0, const float baseTgtSwitchPenalty = 1.0f)
@@ -104,12 +96,12 @@ public:
     uint16_t getCurrentStep() const { return currentStep_; }
     uint16_t getStepsCount() const { return getCurrentStep() + 1; }
 
-    const SimStep *getSteps() const { return steps_; }
+    const std::vector<SimStep> &getSteps() const { return steps_; }
 
 private:
     bool isInitialized_{false};
     uint16_t maxSteps_{0};
-    SimStep *steps_ = nullptr;
+    std::vector<SimStep> steps_;
     float currentTime_{0.0f};
     uint16_t currentStep_{0};
     bool isCompleted_{false};
@@ -139,7 +131,7 @@ private:
     bool doStep();
 
     void initDerivedData();
-    SimStep *initStep(uint16_t stepIdx);
+    SimStep &initStep(uint16_t stepIdx);
 };
 
 }  // namespace miltech::simulation
