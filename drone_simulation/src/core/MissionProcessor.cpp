@@ -96,6 +96,7 @@ void MissionProcessor::doReset()
     currentTime_ = 0.0f;
 
     steps_.clear();
+    steps_.reserve(maxSteps_);
 
     // ReSharper disable once CppExpressionWithoutSideEffects
     initStep(currentStep_);
@@ -111,6 +112,7 @@ void MissionProcessor::initDerivedData()
 SimStep &MissionProcessor::initStep(const uint16_t stepIdx)
 {
     steps_.resize(stepIdx + 1);
+
     auto &step = steps_.at(stepIdx);
 
     if (stepIdx == 0) {
