@@ -2,7 +2,6 @@
 
 #include "IConfigLoaderOptions.hpp"
 #include <string>
-#include <utility>
 
 namespace miltech::simulation {
 

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "AmmoParams.hpp"
-#include "Config.hpp"
+#include "types.hpp"
 
 namespace miltech::simulation {
 

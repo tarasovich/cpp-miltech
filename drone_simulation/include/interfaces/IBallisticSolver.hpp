@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Coord.hpp"
-#include "Config.hpp"
-#include "AmmoParams.hpp"
-#include "BallisticSolution.hpp"
+#include "types.hpp"
 
 namespace miltech::simulation {
 

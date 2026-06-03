@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Config.hpp"
-#include "Coord.hpp"
+#include "types.hpp"
 #include "IBallisticSolver.hpp"
 
 namespace miltech::simulation {

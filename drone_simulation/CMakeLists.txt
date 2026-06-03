@@ -17,6 +17,7 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 add_executable(drone_simulation ${SOURCES} ${HEADERS})
 
 target_include_directories(drone_simulation PUBLIC
+		include/
 		include/lib
 		include/core
 		include/core/config

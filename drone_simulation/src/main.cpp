@@ -1,3 +1,4 @@
+#include "types.hpp"
 #include "BallisticSolverFactory.hpp"
 #include "ConfigLoaderFactory.hpp"
 #include "FileConfigLoaderOptions.hpp"
@@ -5,14 +6,13 @@
 #include "ITargetProvider.hpp"
 #include "MissionProcessor.hpp"
 #include "TargetProviderFactory.hpp"
-#include <cstring>
-
 // To create better diagnostics messages, each JSON value needs a pointer to its parent value such that a global context (i.e., a path from
 // the root value to the value that led to the exception) can be created. They can, however, be enabled by defining the preprocessor symbol
 // JSON_DIAGNOSTICS to 1 before including json.hpp.
 #define JSON_DIAGNOSTICS 1  // NOLINT (consider using a 'constexpr' constant )
 #include "json.hpp"
 #include <fstream>
+#include <cstring>
 
 using json = nlohmann::json;
 

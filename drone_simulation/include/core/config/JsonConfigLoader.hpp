@@ -1,7 +1,6 @@
 #pragma once
 
 #include "FileConfigLoader.hpp"
-
 #include <fstream>
 
 namespace miltech::simulation {
