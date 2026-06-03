@@ -125,6 +125,7 @@ bool MissionProcessor::doStep()
 {
     auto *curStep = &steps_[currentStep_];
 
+    int bestTgtIdx = -1;
     float bestTotalTime{-1.0f};
     float bestDir{0.0f};
     Coord bestTgtPos{};
@@ -132,6 +133,8 @@ bool MissionProcessor::doStep()
     for (uint8_t i = 0; i < targets_->getTargetCount(); ++i) {
         float totalTime{};
         float desiredDir{};
+
+        const bool isAnotherTarget{curStep->targetIdx < 0 || static_cast<uint8_t>(curStep->targetIdx) != i};
 
         const auto target = targets_->getTarget(i);
         const float simPos = currentTime_ / config_->arrayTimeStep;
@@ -153,10 +156,18 @@ bool MissionProcessor::doStep()
         const auto predictedSolution = solver_->solve(curStep->pos, predictedTargetPos, *config_, *ammoParams_);
         calculateDirAndTimeToFire(predictedSolution, *curStep, *config_, desiredDir, totalTime);
 
+        // Штраф за зміну цілі
+        if (isAnotherTarget) {
+            const float targetSpeed = std::hypot(velocity.x, velocity.y);
+            const float turnTime = std::fabs(normalizeAngle(desiredDir - curStep->direction)) / config_->angularSpeed;
+            const float switchPenalty = baseTgtSwitchPenalty_ + (targetSpeed * turnTime / config_->hitRadius);
+            totalTime += switchPenalty;
+        }
+
         // 10.Обрати ціль з мінімальним загальним часом (з врахуванням timeToStop при зміні цілі)
         // > timeToStop вже врахований у totalTime
         if (bestTotalTime < 0.0f || totalTime < bestTotalTime) {
-            curStep->targetIdx = i;
+            bestTgtIdx = i;
             curStep->ballistic = predictedSolution;
             bestDir = desiredDir;
             bestTgtPos = targetPos;
@@ -166,9 +177,12 @@ bool MissionProcessor::doStep()
     }
 
     // такого бути не повинно
-    if (curStep->targetIdx < 0) {
+    if (bestTgtIdx < 0) {
         throw std::runtime_error("MissionProcessor::doStep(): No valid target found");
     }
+
+    // оновлюємо ціль поточного кроку
+    curStep->targetIdx = bestTgtIdx;
 
     // Симуляція завершується, коли дрон досягне точки скиду (hitRadius) і скине боєприпас.
     const float hitRadius = config_->hitRadius / 2;

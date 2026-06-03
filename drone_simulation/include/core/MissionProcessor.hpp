@@ -53,8 +53,10 @@ public:
         }
     }
 
-    explicit MissionProcessor(const uint16_t maxSteps = 0)
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+    explicit MissionProcessor(const uint16_t maxSteps = 0, const float baseTgtSwitchPenalty = 1.0f)
         : maxSteps_(maxSteps)
+        , baseTgtSwitchPenalty_(baseTgtSwitchPenalty)
     {
         if (maxSteps_ == 0) {
             throw std::invalid_argument("MissionProcessor::MissionProcessor(): maxSteps must be greater than 0");
@@ -116,6 +118,8 @@ private:
     const AmmoParams *ammoParams_ = nullptr;
     const ITargetProvider *targets_ = nullptr;
     IBallisticSolver *solver_ = nullptr;
+
+    float baseTgtSwitchPenalty_{1.0f};
 
     void requireInit() const
     {
