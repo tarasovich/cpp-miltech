@@ -3,6 +3,7 @@
 #include "IBallisticSolver.hpp"
 #include "IConfigLoader.hpp"
 #include "ITargetProvider.hpp"
+#include <cstdint>
 
 namespace miltech::simulation {
 

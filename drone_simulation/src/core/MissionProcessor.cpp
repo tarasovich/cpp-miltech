@@ -1,5 +1,6 @@
 #include "MissionProcessor.hpp"
 #include <cmath>
+#include <cstdint>
 
 namespace miltech::simulation {
 

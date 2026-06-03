@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <cstdint>
 
 namespace miltech::simulation {
 
