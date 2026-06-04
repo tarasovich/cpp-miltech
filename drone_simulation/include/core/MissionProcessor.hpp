@@ -46,7 +46,7 @@ public:
     ~MissionProcessor() = default;
 
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-    explicit MissionProcessor(const uint16_t maxSteps = 0, const float baseTgtSwitchPenalty = 1.0f)
+    explicit MissionProcessor(const uint16_t maxSteps = 0, const float baseTgtSwitchPenalty = 0.0f)
         : maxSteps_(maxSteps)
         , baseTgtSwitchPenalty_(baseTgtSwitchPenalty)
     {
@@ -112,7 +112,7 @@ private:
     IBallisticSolver *solver_ = nullptr;
     MissionDerivedData derivedData_{};
 
-    float baseTgtSwitchPenalty_{1.0f};
+    float baseTgtSwitchPenalty_{0.0f};
 
     void requireInit() const
     {
