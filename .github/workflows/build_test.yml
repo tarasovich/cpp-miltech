@@ -1,23 +1,11 @@
-# GitHub Actions workflow: збірка проєкту через репівський devcontainer.
-#
-# Ключова ідея: CI використовує ТОЙ САМИЙ Dockerfile що й локально у
-# VS Code. Інакше "works on my machine" виникає постійно: локальний
-# devcontainer має одні версії тулів, CI runner інші. Тут вони однакові.
+# Цей workflow запускається з .github/workflows/ci.yml і виконує збірку та тестування
+name: Build & Test
 
-name: Build
-
-# Тригери:
-# - push.branches: [main] - запускаємо тільки при push у main (тобто
-#   при merge PR). Обмеження важливе: без нього push + pull_request
-#   запускали б одну й ту саму збірку двічі на кожен update PR.
-# - pull_request: запускаємо при відкритті PR і кожному update гілки.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_call:
 
 jobs:
-  build:
+  build_test:
     # ubuntu-latest - загальний GitHub runner з preinstalled Docker і
     # актуальною Ubuntu. Для нашого випадку (build всередині
     # devcontainer-а) специфічний runner не потрібен.
@@ -43,16 +31,22 @@ jobs:
       # build/debug. Це також збігається з clangd compile_commands і
       # VS Code debug launch config. ARM64 preset додатково перевіряє,
       # що demo-код можна крос-компілювати для SBC target-а.
-      - name: Build inside dev container
+      - name: Build & Test inside dev container
         uses: devcontainers/ci@v0.3
         with:
           # push: never - не публікувати built image ніде. За замовчуванням
           # action пробує push у registry і падає з "imageName is required"
           # бо ми не конфігуруємо registry. Image потрібен тільки локально
           # на runner-і для runCmd.
+          # білд і тести запускаємо одним кроком, щоб не піднімати контейнер двічі.
           push: never
           runCmd: |
-            cmake --preset debug
-            cmake --build --preset debug
-            cmake --preset aarch64-debug
-            cmake --build --preset aarch64-debug
+            make build-all
+            make test
+
+      # Зберігаємо build як артефакт, щоб його можна було
+      # використати в clang-tidy workflow.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: build/debug

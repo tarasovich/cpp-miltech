@@ -7,7 +7,7 @@ out/
 CMakeCache.txt
 CMakeFiles/
 CTestTestfile.cmake
-Makefile
+Makefile.in
 cmake_install.cmake
 compile_commands.json
 install_manifest.txt
@@ -34,3 +34,8 @@ Thumbs.db
 
 # env files
 .devcontainer/local.env
+
+# CLion don't wanna see these files in subdir (symlinks created)
+.clang-format
+.cmake-format.json
+.clang-tidy

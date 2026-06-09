@@ -181,7 +181,7 @@
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantLambdaParameterList/@EntryIndexedValue" value="HINT" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantMemberInitializer/@EntryIndexedValue" value="SUGGESTION" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantNamespaceDefinition/@EntryIndexedValue" value="SUGGESTION" type="string" />
-    <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantParentheses/@EntryIndexedValue" value="HINT" type="string" />
+    <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantParentheses/@EntryIndexedValue" value="DO_NOT_SHOW" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantQualifier/@EntryIndexedValue" value="HINT" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantQualifierADL/@EntryIndexedValue" value="DO_NOT_SHOW" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantStaticSpecifierOnMemberAllocationFunction/@EntryIndexedValue" value="HINT" type="string" />
@@ -194,7 +194,7 @@
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppReinterpretCastFromVoidPtr/@EntryIndexedValue" value="SUGGESTION" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRemoveRedundantBraces/@EntryIndexedValue" value="DO_NOT_SHOW" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppReplaceMemsetWithZeroInitialization/@EntryIndexedValue" value="SUGGESTION" type="string" />
-    <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppReplaceTieWithStructuredBinding/@EntryIndexedValue" value="SUGGESTION" type="string" />
+    <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppReplaceTieWithStructuredBinding/@EntryIndexedValue" value="DO_NOT_SHOW" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppReturnNoValueInNonVoidFunction/@EntryIndexedValue" value="WARNING" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppSmartPointerVsMakeFunction/@EntryIndexedValue" value="SUGGESTION" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppSomeObjectMembersMightNotBeInitialized/@EntryIndexedValue" value="WARNING" type="string" />
@@ -229,7 +229,7 @@
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppUseFamiliarTemplateSyntaxForGenericLambdas/@EntryIndexedValue" value="SUGGESTION" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppUseRangeAlgorithm/@EntryIndexedValue" value="SUGGESTION" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppUseStdSize/@EntryIndexedValue" value="SUGGESTION" type="string" />
-    <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppUseStructuredBinding/@EntryIndexedValue" value="HINT" type="string" />
+    <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppUseStructuredBinding/@EntryIndexedValue" value="DO_NOT_SHOW" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppUseTypeTraitAlias/@EntryIndexedValue" value="SUGGESTION" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppUserDefinedLiteralSuffixDoesNotStartWithUnderscore/@EntryIndexedValue" value="WARNING" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppUsingResultOfAssignmentAsCondition/@EntryIndexedValue" value="WARNING" type="string" />
@@ -247,8 +247,6 @@
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=StdIsConstantEvaluatedWillAlwaysEvaluateToConstant/@EntryIndexedValue" value="WARNING" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=StringLiteralTypo/@EntryIndexedValue" value="DO_NOT_SHOW" type="string" />
     <option name="/Default/CodeStyle/CodeFormatting/CppClangFormat/EnableClangFormatSupport/@EntryValue" value="true" type="bool" />
-    <option name="/Default/CodeStyle/CodeFormatting/CppClangFormat/ExecutableToUse/@EntryValue" value="Custom" type="string" />
-    <option name="/Default/CodeStyle/CodeFormatting/CppClangFormat/ExternalClangFormatPath/@EntryValue" value="\\wsl.localhost\Ubuntu\home\oleksii\Job\CppMiltech\.devcontainer\.clang-format" type="string" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTILINE_ARGUMENT/@EntryValue" value="true" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTILINE_BINARY_EXPRESSIONS_CHAIN/@EntryValue" value="true" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTILINE_CALLS_CHAIN/@EntryValue" value="false" type="bool" />
@@ -344,6 +342,6 @@
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/WRAP_BEFORE_TERNARY_OPSIGNS/@EntryValue" value="true" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/WRAP_LIMIT/@EntryValue" value="180" type="long" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/WRAP_PARAMETERS_STYLE/@EntryValue" value="WRAP_IF_LONG" type="string" />
-    <option name="/Default/CodeStyle/EditorConfig/EnableClangFormatSupport/@EntryValue" value="false" type="bool" />
+    <option name="/Default/CodeStyle/EditorConfig/EnableClangFormatSupport/@EntryValue" value="true" type="bool" />
   </component>
 </project>
