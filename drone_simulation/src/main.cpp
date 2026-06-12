@@ -116,36 +116,19 @@ int main(const int argc, char *argv[])
     const IConfigLoaderOptions *configOptions = new FileConfigLoaderOptions(dataDir, configFilename, ammoFilename);
 
     IConfigLoader *configLoader = nullptr;
-    try {
-        configLoader = ConfigLoaderFactory::create(*configOptions);
-    }
-    catch (const std::exception &e) {
-        std::cerr << "Error creating config loader: " << e.what() << '\n';
-        delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
-        return 1;
-    }
-
-    const ITargetProvider *targets = nullptr;
-    try {
-        targets = TargetProviderFactory::create(ProviderType::JSON, dataDir + "/" + targetsFilename);
-    }
-    catch (const std::exception &e) {
-        std::cerr << "Error loading targets: " << e.what() << '\n';
-        delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
-        delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
-        delete targets;        // NOLINT(cppcoreguidelines-owning-memory)
-        return 1;
-    }
-
+    ITargetProvider *targets = nullptr;
     IBallisticSolver *solver = nullptr;
     try {
+        configLoader = ConfigLoaderFactory::create(*configOptions);
+        targets = TargetProviderFactory::create(ProviderType::JSON, dataDir + "/" + targetsFilename);
         solver = BallisticSolverFactory::create(SolverType::ANALYTICAL);
     }
     catch (const std::exception &e) {
-        std::cerr << "Error creating ballistic solver: " << e.what() << '\n';
+        std::cerr << "Error during initializing: " << e.what() << '\n';
         delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
         delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
         delete targets;        // NOLINT(cppcoreguidelines-owning-memory)
+        delete solver;         // NOLINT(cppcoreguidelines-owning-memory)
         return 1;
     }
 

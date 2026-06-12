@@ -64,7 +64,7 @@ public:
     }
 
     // Завантажити конфіг, підготувати дані для ітерації
-    void init(IConfigLoader *&configLoader, const ITargetProvider *&targets)
+    void init(IConfigLoader *&configLoader, ITargetProvider *&targets)
     {
         if (isInitialized_) {
             throw std::logic_error("MissionProcessor::init(): Mission already initialized");
@@ -133,7 +133,7 @@ private:
         }
     }
 
-    void doInit(IConfigLoader *&configLoader, const ITargetProvider *&targets);
+    void doInit(IConfigLoader *&configLoader, ITargetProvider *&targets);
     void doReset();
     bool doHasNext() const;
     bool doStep();

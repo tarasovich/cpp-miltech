@@ -72,7 +72,7 @@ void calculateDirAndTimeToFire(const BallisticSolution &ballistics,
     }
 }
 
-void MissionProcessor::doInit(IConfigLoader *&configLoader, const ITargetProvider *&targets)
+void MissionProcessor::doInit(IConfigLoader *&configLoader, ITargetProvider *&targets)
 {
     configLoader->load();
 
