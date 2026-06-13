@@ -1,6 +1,8 @@
 #ifndef DRONE_SIMULATION_FILECONFIGLOADER_HPP
 #define DRONE_SIMULATION_FILECONFIGLOADER_HPP
 
+#include "Config.hpp"
+#include "AmmoParams.hpp"
 #include "IConfigLoader.hpp"
 #include <filesystem>
 #include <iostream>
