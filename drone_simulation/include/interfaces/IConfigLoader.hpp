@@ -1,9 +1,10 @@
 #ifndef DRONE_SIMULATION_ICONFIGLOADER_HPP
 #define DRONE_SIMULATION_ICONFIGLOADER_HPP
-#include "AmmoParams.hpp"
-#include "Config.hpp"
 
 namespace miltech::simulation {
+
+struct Config;
+struct AmmoParams;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class IConfigLoader {

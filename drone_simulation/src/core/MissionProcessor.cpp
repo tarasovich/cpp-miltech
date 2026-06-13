@@ -1,3 +1,9 @@
+#include "Config.hpp"
+#include "AmmoParams.hpp"
+#include "Target.hpp"
+#include "IConfigLoader.hpp"
+#include "ITargetProvider.hpp"
+#include "IBallisticSolver.hpp"
 #include "MissionProcessor.hpp"
 #include <cmath>
 

@@ -1,7 +1,9 @@
 #ifndef DRONE_SIMULATION_ANALYTICALSOLVER_HPP
 #define DRONE_SIMULATION_ANALYTICALSOLVER_HPP
-#include "Config.hpp"
+
 #include "Coord.hpp"
+#include "Config.hpp"
+#include "AmmoParams.hpp"
 #include "IBallisticSolver.hpp"
 
 namespace miltech::simulation {

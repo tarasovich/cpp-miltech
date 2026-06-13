@@ -1,11 +1,19 @@
 #ifndef DRONE_SIMULATION_MISSIONPROCESSOR_HPP
 #define DRONE_SIMULATION_MISSIONPROCESSOR_HPP
 
-#include "IBallisticSolver.hpp"
-#include "IConfigLoader.hpp"
-#include "ITargetProvider.hpp"
+#include "Coord.hpp"
+#include "BallisticSolution.hpp"
+#include <cstdint>
+#include <iostream>
 
 namespace miltech::simulation {
+
+class IBallisticSolver;
+class IConfigLoader;
+class ITargetProvider;
+
+struct Config;
+struct AmmoParams;
 
 // ============================================================
 // Стани дрона (enum)

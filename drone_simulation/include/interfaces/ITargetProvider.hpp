@@ -1,10 +1,12 @@
 #ifndef DRONE_SIMULATION_ITARGETPROVIDER_HPP
 #define DRONE_SIMULATION_ITARGETPROVIDER_HPP
-#include "Target.hpp"
+
 #include <iostream>
 #include <cstdint>
 
 namespace miltech::simulation {
+
+struct Target;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ITargetProvider {

@@ -1,11 +1,12 @@
 #ifndef DRONE_SIMULATION_BALLISTICSOLVERFACTORY_HPP
 #define DRONE_SIMULATION_BALLISTICSOLVERFACTORY_HPP
 
-#include "IBallisticSolver.hpp"
 #include "AnalyticalSolver.hpp"
 #include <cstdint>
 
 namespace miltech::simulation {
+
+class IBallisticSolver;
 
 enum class SolverType : std::uint8_t { ANALYTICAL };
 

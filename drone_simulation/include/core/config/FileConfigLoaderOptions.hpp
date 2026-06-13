@@ -1,5 +1,6 @@
 #ifndef DRONE_SIMULATION_FILECONFIGLOADEROPTIONS_HPP
 #define DRONE_SIMULATION_FILECONFIGLOADEROPTIONS_HPP
+
 #include "IConfigLoaderOptions.hpp"
 #include <string>
 #include <utility>
