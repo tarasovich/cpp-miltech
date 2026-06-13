@@ -1,10 +1,11 @@
 #pragma once
 
-#include "ITargetProvider.hpp"
 #include "JsonTargetProvider.hpp"
 #include <cstdint>
 
 namespace miltech::simulation {
+
+class ITargetProvider;
 
 enum class ProviderType : std::uint8_t { JSON };
 

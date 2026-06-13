@@ -1,11 +1,14 @@
 #pragma once
 
-#include "IBallisticSolver.hpp"
-#include "IConfigLoader.hpp"
-#include "ITargetProvider.hpp"
+#include "types.hpp"
 #include <cstdint>
+#include <iostream>
 
 namespace miltech::simulation {
+
+class IBallisticSolver;
+class IConfigLoader;
+class ITargetProvider;
 
 // ============================================================
 // Стани дрона (enum)
@@ -56,7 +59,7 @@ public:
     }
 
     // Завантажити конфіг, підготувати дані для ітерації
-    void init(IConfigLoader *&configLoader, const ITargetProvider *&targets)
+    void init(IConfigLoader *&configLoader, ITargetProvider *&targets)
     {
         if (isInitialized_) {
             throw std::logic_error("MissionProcessor::init(): Mission already initialized");
@@ -125,7 +128,7 @@ private:
         }
     }
 
-    void doInit(IConfigLoader *&configLoader, const ITargetProvider *&targets);
+    void doInit(IConfigLoader *&configLoader, ITargetProvider *&targets);
     void doReset();
     bool doHasNext() const;
     bool doStep();

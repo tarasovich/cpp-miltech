@@ -1,10 +1,11 @@
 #pragma once
 
-#include "types.hpp"
 #include <iostream>
 #include <cstdint>
 
 namespace miltech::simulation {
+
+struct Target;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ITargetProvider {

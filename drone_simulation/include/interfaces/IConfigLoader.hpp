@@ -1,8 +1,9 @@
 #pragma once
 
-#include "types.hpp"
-
 namespace miltech::simulation {
+
+struct Config;
+struct AmmoParams;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class IConfigLoader {

@@ -1,3 +1,9 @@
+#include "Config.hpp"
+#include "AmmoParams.hpp"
+#include "Target.hpp"
+#include "IConfigLoader.hpp"
+#include "ITargetProvider.hpp"
+#include "IBallisticSolver.hpp"
 #include "MissionProcessor.hpp"
 #include <cmath>
 #include <cstdint>
@@ -73,7 +79,7 @@ void calculateDirAndTimeToFire(const BallisticSolution &ballistics,
     }
 }
 
-void MissionProcessor::doInit(IConfigLoader *&configLoader, const ITargetProvider *&targets)
+void MissionProcessor::doInit(IConfigLoader *&configLoader, ITargetProvider *&targets)
 {
     configLoader->load();
 

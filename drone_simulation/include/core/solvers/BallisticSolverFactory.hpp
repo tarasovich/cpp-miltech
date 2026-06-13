@@ -1,10 +1,11 @@
 #pragma once
 
-#include "IBallisticSolver.hpp"
 #include "AnalyticalSolver.hpp"
 #include <cstdint>
 
 namespace miltech::simulation {
+
+class IBallisticSolver;
 
 enum class SolverType : std::uint8_t { ANALYTICAL };
 

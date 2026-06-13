@@ -1,11 +1,12 @@
 #pragma once
 
 #include "FileConfigLoaderOptions.hpp"
-#include "IConfigLoader.hpp"
 #include "IConfigLoaderOptions.hpp"
 #include "JsonConfigLoader.hpp"
 
 namespace miltech::simulation {
+
+class IConfigLoader;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ConfigLoaderFactory {
@@ -14,7 +15,7 @@ public:
     static IConfigLoader* create(const IConfigLoaderOptions& options)
     {
         if (const auto* fileOptions = dynamic_cast<const FileConfigLoaderOptions*>(&options)) {
-            if (fileOptions->getMainName().ends_with(".json") || fileOptions->getAmmoName().ends_with(".json")) {
+            if (fileOptions->getMainName().ends_with(".json") && fileOptions->getAmmoName().ends_with(".json")) {
                 const fs::path dir = fileOptions->getDir();
                 // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
                 return new JsonConfigLoader(dir / fileOptions->getMainName(), dir / fileOptions->getAmmoName());
