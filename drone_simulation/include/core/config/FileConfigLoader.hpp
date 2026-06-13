@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Config.hpp"
-#include "AmmoParams.hpp"
+#include "types.hpp"
 #include "IConfigLoader.hpp"
 #include <filesystem>
 #include <iostream>

@@ -3,8 +3,7 @@
 // JSON_DIAGNOSTICS to 1 before including json.hpp.
 #define JSON_DIAGNOSTICS 1  // NOLINT (consider using a 'constexpr' constant )
 #include "json.hpp"
-#include "Config.hpp"
-#include "AmmoParams.hpp"
+#include "types.hpp"
 #include "JsonConfigLoader.hpp"
 #include <fstream>
 
