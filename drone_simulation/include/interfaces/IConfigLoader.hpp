@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace miltech::simulation {
 
 struct Config;
@@ -9,8 +11,8 @@ struct AmmoParams;
 class IConfigLoader {
 public:
     virtual bool load() = 0;
-    virtual Config *getConfig() const = 0;
-    virtual AmmoParams *getAmmoParams() const = 0;
+    virtual std::unique_ptr<Config> getConfig() = 0;
+    virtual std::unique_ptr<AmmoParams> getAmmoParams() = 0;
     virtual ~IConfigLoader() = default;
 };
 

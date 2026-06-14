@@ -36,18 +36,18 @@ public:
     fs::path getMainPath() const { return this->mainPath_; }
     fs::path getAmmoPath() const { return this->ammoPath_; }
 
-    Config *getConfig() const override
+    std::unique_ptr<Config> getConfig() override
     {
         this->requireLoad();
 
-        return resultConfig_.get();
+        return std::move(resultConfig_);
     }
 
-    AmmoParams *getAmmoParams() const override
+    std::unique_ptr<AmmoParams> getAmmoParams() override
     {
         this->requireLoad();
 
-        return resultAmmoParams_.get();
+        return std::move(resultAmmoParams_);
     }
 
 protected:

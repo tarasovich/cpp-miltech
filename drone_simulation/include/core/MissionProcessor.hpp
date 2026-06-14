@@ -26,7 +26,6 @@ enum class DroneState : uint8_t {
 struct SimStep {
     Coord pos;                    // позиція дрона
     float direction;              // напрямок (рад)
-    float speed;                  // поточна швидкість
     DroneState state;             // стан автомата (0-4)
     int targetIdx;                // індекс поточної цілі
     BallisticSolution ballistic;  // балістичне рішення для кращої цілі кроку
@@ -102,8 +101,7 @@ private:
     uint16_t currentStep_{0};
     bool isCompleted_{false};
 
-    const Config *config_ = nullptr;
-    const AmmoParams *ammoParams_ = nullptr;
+    std::unique_ptr<DroneContext> ctx_ = nullptr;
     std::unique_ptr<ITargetProvider> targets_ = nullptr;
     std::unique_ptr<IBallisticSolver> solver_ = nullptr;
     MissionDerivedData derivedData_{};
