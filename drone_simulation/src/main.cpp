@@ -113,11 +113,12 @@ int main(const int argc, char *argv[])
         }
     }
 
-    const IConfigLoaderOptions *configOptions = new FileConfigLoaderOptions(dataDir, configFilename, ammoFilename);
+    // > а тут взагалі потрібно використовувати стек?
+    const auto configOptions = std::make_unique<FileConfigLoaderOptions>(dataDir, configFilename, ammoFilename);
 
-    IConfigLoader *configLoader = nullptr;
-    ITargetProvider *targets = nullptr;
-    IBallisticSolver *solver = nullptr;
+    std::unique_ptr<IConfigLoader> configLoader = nullptr;
+    std::unique_ptr<ITargetProvider> targets = nullptr;
+    std::unique_ptr<IBallisticSolver> solver = nullptr;
     try {
         configLoader = ConfigLoaderFactory::create(*configOptions);
         targets = TargetProviderFactory::create(ProviderType::JSON, dataDir + "/" + targetsFilename);
@@ -125,19 +126,14 @@ int main(const int argc, char *argv[])
     }
     catch (const std::exception &e) {
         std::cerr << "Error during initializing: " << e.what() << '\n';
-        delete configOptions;  // NOLINT(cppcoreguidelines-owning-memory)
-        delete configLoader;   // NOLINT(cppcoreguidelines-owning-memory)
-        delete targets;        // NOLINT(cppcoreguidelines-owning-memory)
-        delete solver;         // NOLINT(cppcoreguidelines-owning-memory)
         return 1;
     }
 
     int result = 0;
 
-    MissionProcessor *missionProcessor = nullptr;
+    std::unique_ptr<MissionProcessor> missionProcessor;
     try {
-        // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-        missionProcessor = new MissionProcessor(maxSteps);
+        missionProcessor = std::make_unique<MissionProcessor>(maxSteps);
         missionProcessor->init(configLoader, targets);
         missionProcessor->changeSolver(solver);
 
@@ -182,12 +178,6 @@ int main(const int argc, char *argv[])
     }
 
     std::cout << '\n';
-
-    delete configOptions;     // NOLINT(cppcoreguidelines-owning-memory)
-    delete configLoader;      // NOLINT(cppcoreguidelines-owning-memory)
-    delete targets;           // NOLINT(cppcoreguidelines-owning-memory)
-    delete solver;            // NOLINT(cppcoreguidelines-owning-memory)
-    delete missionProcessor;  // NOLINT(cppcoreguidelines-owning-memory)
 
     return result;
 }

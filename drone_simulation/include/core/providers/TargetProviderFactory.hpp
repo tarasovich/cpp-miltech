@@ -2,6 +2,7 @@
 
 #include "JsonTargetProvider.hpp"
 #include <cstdint>
+#include <memory>
 
 namespace miltech::simulation {
 
@@ -14,12 +15,11 @@ class TargetProviderFactory {
 public:
     ~TargetProviderFactory() = default;
 
-    static ITargetProvider* create(const ProviderType type, const std::string& jsonPath)
+    static std::unique_ptr<ITargetProvider> create(const ProviderType type, const std::string& jsonPath)
     {
         switch (type) {
             case ProviderType::JSON:
-                // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-                return new JsonTargetProvider(jsonPath);
+                return std::make_unique<JsonTargetProvider>(jsonPath);
             default:
                 throw std::invalid_argument("TargetProviderFactory::create(): Unsupported provider type");
         }

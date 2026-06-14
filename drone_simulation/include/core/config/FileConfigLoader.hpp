@@ -3,7 +3,6 @@
 #include "types.hpp"
 #include "IConfigLoader.hpp"
 #include <filesystem>
-#include <iostream>
 
 namespace miltech::simulation {
 
@@ -41,29 +40,14 @@ public:
     {
         this->requireLoad();
 
-        return resultConfig_;
+        return resultConfig_.get();
     }
 
     AmmoParams *getAmmoParams() const override
     {
         this->requireLoad();
 
-        return resultAmmoParams_;
-    }
-
-    ~FileConfigLoader() override
-    {
-        std::cout << "FileConfigLoader::destructor\n";
-
-        if (resultConfig_ != nullptr) {
-            delete resultConfig_;
-            resultConfig_ = nullptr;
-        }
-
-        if (resultAmmoParams_ != nullptr) {
-            delete resultAmmoParams_;
-            resultAmmoParams_ = nullptr;
-        }
+        return resultAmmoParams_.get();
     }
 
 protected:
@@ -73,10 +57,9 @@ protected:
             throw std::logic_error("FileConfigLoader::initResultConfig(): resultConfig already initialized");
         }
 
-        // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-        resultConfig_ = new Config();
+        resultConfig_ = std::make_unique<Config>();
 
-        return resultConfig_;
+        return resultConfig_.get();
     }
 
     AmmoParams *initResultAmmoParams()
@@ -85,10 +68,9 @@ protected:
             throw std::logic_error("FileConfigLoader::initResultAmmoParams(): resultAmmoParams already initialized");
         }
 
-        // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-        resultAmmoParams_ = new AmmoParams;
+        resultAmmoParams_ = std::make_unique<AmmoParams>();
 
-        return resultAmmoParams_;
+        return resultAmmoParams_.get();
     }
 
     virtual bool parse() = 0;
@@ -98,8 +80,8 @@ private:
     fs::path mainPath_;
     fs::path ammoPath_;
 
-    Config *resultConfig_ = nullptr;
-    AmmoParams *resultAmmoParams_ = nullptr;
+    std::unique_ptr<Config> resultConfig_;
+    std::unique_ptr<AmmoParams> resultAmmoParams_;
 
     void requireLoad() const
     {

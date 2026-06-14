@@ -4,7 +4,6 @@
 #include "IBallisticSolver.hpp"
 #include "MissionProcessor.hpp"
 #include <cmath>
-#include <cstdint>
 
 namespace miltech::simulation {
 
@@ -77,13 +76,23 @@ void calculateDirAndTimeToFire(const BallisticSolution &ballistics,
     }
 }
 
-void MissionProcessor::doInit(IConfigLoader *&configLoader, ITargetProvider *&targets)
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+MissionProcessor::MissionProcessor(const uint16_t maxSteps, const float baseTgtSwitchPenalty)
+    : maxSteps_(maxSteps)
+    , baseTgtSwitchPenalty_(baseTgtSwitchPenalty)
+{
+    if (maxSteps_ == 0) {
+        throw std::invalid_argument("MissionProcessor::MissionProcessor(): maxSteps must be greater than 0");
+    }
+}
+
+void MissionProcessor::doInit(const std::unique_ptr<IConfigLoader> &configLoader, std::unique_ptr<ITargetProvider> &targets)
 {
     configLoader->load();
 
     config_ = configLoader->getConfig();
     ammoParams_ = configLoader->getAmmoParams();
-    targets_ = targets;
+    targets_ = std::move(targets);
 
     std::cout << *config_ << '\n';
     std::cout << *ammoParams_ << '\n';
@@ -92,6 +101,15 @@ void MissionProcessor::doInit(IConfigLoader *&configLoader, ITargetProvider *&ta
     initDerivedData();
 
     doReset();
+}
+
+void MissionProcessor::changeSolver(std::unique_ptr<IBallisticSolver> &solver)
+{
+    if (!solver) {
+        throw std::invalid_argument("MissionProcessor::changeSolver(): solver is null");
+    }
+
+    solver_ = std::move(solver);
 }
 
 void MissionProcessor::doReset()
@@ -301,5 +319,7 @@ bool MissionProcessor::doStep()
 
     return true;
 }
+
+MissionProcessor::~MissionProcessor() = default;
 
 }  // namespace miltech::simulation
