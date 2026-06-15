@@ -6,9 +6,23 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(drone_simulation src/main.cpp)
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS # for IDE
+		include/*.hpp
+)
 
-target_include_directories(drone_simulation PUBLIC include)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+		src/*.cpp
+)
+
+add_executable(drone_simulation ${SOURCES} ${HEADERS})
+
+target_include_directories(drone_simulation PUBLIC
+		include/lib
+		include/core
+		include/core/config
+		include/dto
+		include/interfaces
+)
 
 target_compile_options(drone_simulation PRIVATE -Wall -Wextra -pedantic)
 

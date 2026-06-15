@@ -1,0 +1,26 @@
+#ifndef DRONE_SIMULATION_ANALYTICALSOLVER_HPP
+#define DRONE_SIMULATION_ANALYTICALSOLVER_HPP
+
+#include "Coord.hpp"
+#include "Config.hpp"
+#include "AmmoParams.hpp"
+#include "IBallisticSolver.hpp"
+
+namespace miltech::simulation {
+
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
+class AnalyticalSolver : public IBallisticSolver {
+public:
+    ~AnalyticalSolver() override = default;
+    AnalyticalSolver() = default;
+
+    BallisticSolution solve(const Coord &dronePos, const Coord &targetPos, const Config &config, const AmmoParams &ammo) override;
+
+private:
+    static float calculateBombFallTime(const Config &config, const AmmoParams &ammo);
+    static float calculateBombFlightDistance(const Config &config, const AmmoParams &ammo, const float &fTime);
+};
+
+}  // namespace miltech::simulation
+
+#endif  // DRONE_SIMULATION_ANALYTICALSOLVER_HPP

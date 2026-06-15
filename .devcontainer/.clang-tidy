@@ -13,17 +13,21 @@ Checks: >
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -modernize-use-trailing-return-type,
+  -modernize-use-nodiscard,
   -readability-avoid-const-params-in-decls,
   -readability-function-cognitive-complexity,
   -readability-identifier-length,
-  -readability-identifier-naming,
   -readability-magic-numbers,
   -readability-uppercase-literal-suffix,
   misc-unused-using-decls,
 
+CheckOptions:
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: "_"
+
 # Аналізувати лише код домашніх робіт і типові source/include директорії,
 # а не системні headers або сторонні бібліотеки.
-HeaderFilterRegex: '(^|/)(homework_[0-9]+|include|src)/'
+HeaderFilterRegex: '(^|/)(homework_[0-9]+|drone_simulation|include|src)/(?!include/lib/)/'
 
 # Зауваження static analyzer мають ламати перевірку: це найчастіше реальні баги.
 # Решта checks лишаються warning-ами, щоб clang-tidy був навчальним
