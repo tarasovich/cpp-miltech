@@ -1,14 +1,12 @@
 #pragma once
 
+#include <IDroneState.hpp>
 #include <string>
 #include <iostream>
 #include <memory>
 #include <vector>
 
 namespace miltech::simulation {
-
-// class IDroneState;
-enum class DroneState : uint8_t;
 
 // ============================================================
 // Параметри боєприпасу
@@ -118,16 +116,15 @@ struct Target {
 // Спільні дані
 // ============================================================
 struct DroneContext {
-    float direction;                   // поточний напрямок (рад)
-    float desiredDir;                  // обраний напрямок
-    float speed;                       // поточна швидкість
-    std::unique_ptr<Config> cfg;       // Конфіг
-    std::unique_ptr<AmmoParams> ammo;  // Параметри боєприпасу
-    // std::unique_ptr<IDroneState> state;  // стан автомата (STOPPED, ACCELERATING, DECELERATING, TURNING, MOVING)
-    std::unique_ptr<DroneState> state;  // стан автомата (STOPPED, ACCELERATING, DECELERATING, TURNING, MOVING)
-    float accel;                        // прискорення дрону
-    float stepTurn;                     // кут повороту за час симуляції
-    float hitRadius;                    // радіус ураження
+    float direction;                     // поточний напрямок (рад)
+    float desiredDir;                    // обраний напрямок
+    float speed;                         // поточна швидкість
+    std::unique_ptr<Config> cfg;         // Конфіг
+    std::unique_ptr<AmmoParams> ammo;    // Параметри боєприпасу
+    std::unique_ptr<IDroneState> state;  // стан автомата (STOPPED, ACCELERATING, DECELERATING, TURNING, MOVING)
+    float accel;                         // прискорення дрону
+    float stepTurn;                      // кут повороту за час симуляції
+    float hitRadius;                     // радіус ураження
 };
 
 // ============================================================

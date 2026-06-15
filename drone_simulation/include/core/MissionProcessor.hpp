@@ -10,35 +10,18 @@ class IConfigLoader;
 class ITargetProvider;
 
 // ============================================================
-// Стани дрона (enum)
-// ============================================================
-enum class DroneState : uint8_t {
-    STOPPED = 0,
-    ACCELERATING = 1,
-    DECELERATING = 2,
-    TURNING = 3,
-    MOVING = 4,
-};
-
-// ============================================================
 // SimStep - Один крок симуляції для виведення.
 // ============================================================
 struct SimStep {
     Coord pos;                    // позиція дрона
     float direction;              // напрямок (рад)
-    DroneState state;             // стан автомата (0-4)
+    uint8_t state;                // стан автомата (STOPPED - 0, ACCELERATING - 1, DECELERATING - 2, TURNING - 3, MOVING - 4)
     int targetIdx;                // індекс поточної цілі
     BallisticSolution ballistic;  // балістичне рішення для кращої цілі кроку
     Coord aimPoint;               // куди впаде бомба (якщо скинути зараз)
     Coord predictedTarget;        // прогнозована позиція цілі
     // float time; // час
     // int num; // крок
-};
-
-struct MissionDerivedData {
-    float accel;      // прискорення дрону
-    float stepTurn;   // кут повороту за час симуляції
-    float hitRadius;  // радіус ураження
 };
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
@@ -104,7 +87,6 @@ private:
     std::unique_ptr<DroneContext> ctx_ = nullptr;
     std::unique_ptr<ITargetProvider> targets_ = nullptr;
     std::unique_ptr<IBallisticSolver> solver_ = nullptr;
-    MissionDerivedData derivedData_{};
 
     float baseTgtSwitchPenalty_{0.0f};
 
@@ -124,7 +106,6 @@ private:
     bool doHasNext() const;
     bool doStep();
 
-    void initDerivedData();
     SimStep &initStep(uint16_t stepIdx);
 };
 
