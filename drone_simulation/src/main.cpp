@@ -11,6 +11,7 @@
 // JSON_DIAGNOSTICS to 1 before including json.hpp.
 #define JSON_DIAGNOSTICS 1  // NOLINT (consider using a 'constexpr' constant )
 #include "json.hpp"
+#include "CLI11.hpp"
 #include <fstream>
 #include <cstring>
 
@@ -37,92 +38,73 @@ void to_json(json &j, const SimStep &step)
 }  // namespace miltech::simulation
 
 // ============================================================
-// Usage
+// CLI Options
 // ============================================================
-void usage()
-{
-    std::cout << "Usage:\n"
-              << "  drone_simulation [data_dir] [config_file] [ammo_file] [targets_file] [output_file] [max_steps]\n\n"
-
-              << "Arguments:\n"
-
-              << "  data_dir      Directory containing configuration files.\n"
-              << "                Default: drone_simulation/data/test01_base\n\n"
-
-              << "  config_file   Main configuration file name.\n"
-              << "                Resolved relative to data_dir.\n"
-              << "                Default: config.json\n\n"
-
-              << "  ammo_file     Ammo configuration file name.\n"
-              << "                Resolved relative to data_dir.\n"
-              << "                Default: ammo.json\n\n"
-
-              << "  targets_file  Targets configuration file name.\n"
-              << "                Resolved relative to data_dir.\n"
-              << "                Default: targets.json\n\n"
-
-              << "  output_file   Simulation output JSON file path.\n"
-              << "                This path is independent of data_dir.\n"
-              << "                Can be absolute or relative.\n"
-              << "                Default: simulation.json\n\n"
-
-              << "  max_steps     Maximum simulation steps count.\n"
-              << "                Default: 10000\n\n"
-
-              << "Special value:\n"
-              << "  _             Use default value for this argument.\n\n"
-
-              << "Examples:\n"
-              << "  drone_simulation\n"
-              << "  drone_simulation ./data\n"
-              << "  drone_simulation ./data config.json ammo.json targets.json simulation.json 1000\n"
-              << "  drone_simulation _ _ _ custom_targets.json _ 5000\n"
-              << "  drone_simulation ./data _ _ _ ./output/result.json\n"
-              << "  drone_simulation /etc/drone custom_config.json custom_ammo.json custom_targets.json "
-              << "/tmp/result.json 10000\n\n"
-
-              << "Options:\n"
-              << "  -h, --help, help   Show this help message.\n";
-}
+struct CliOptions {
+    std::filesystem::path dataDir{"drone_simulation/data/test01_base"};
+    std::string configFilename{"config.json"};
+    std::string ammoFilename{"ammo_table.json"};
+    std::string targetsFilename{"targets.json"};
+    std::string tableFilename{"ballistic_table.txt"};
+    SolverType solverType{SolverType::TABLE};
+    std::uint16_t maxSteps{10000};
+    std::filesystem::path outputFilename{"simulation.json"};
+};
 
 // ============================================================
 // Програма
 // ============================================================
 int main(const int argc, char *argv[])
 {
-    if (argc > 1) {
-        if (std::strcmp(argv[1], "help") == 0 || std::strcmp(argv[1], "--help") == 0 || std::strcmp(argv[1], "-h") == 0) {
-            usage();
-            return 0;
-        }
+    CliOptions options{};
+    std::unique_ptr<CLI::App> app;
+
+    try {
+        app = std::make_unique<CLI::App>("Drone simulation");
+        app->add_option("--data-dir", options.dataDir, "Directory containing configuration files")->default_val(options.dataDir.string());
+        app->add_option("--config", options.configFilename, "Main configuration file name")->default_val(options.configFilename);
+        app->add_option("--ammo", options.ammoFilename, "Ammo configuration file name")->default_val(options.ammoFilename);
+        app->add_option("--targets", options.targetsFilename, "Targets configuration file name")->default_val(options.targetsFilename);
+        app->add_option("--table", options.tableFilename, "Ballistic table file name")->default_val(options.tableFilename);
+        app->add_option("--solver", options.solverType, "Ballistic solver type: analytical or table")
+            ->default_val(options.solverType)
+            ->transform(CLI::CheckedTransformer(
+                std::map<std::string, SolverType>{{"analytical", SolverType::ANALYTICAL}, {"table", SolverType::TABLE}}, CLI::ignore_case));
+        app->add_option("--output", options.outputFilename, "Simulation output JSON file path")
+            ->default_val(options.outputFilename.string());
+        app->add_option("--max-steps", options.maxSteps, "Maximum simulation steps count")
+            ->default_val(options.maxSteps)
+            ->check(CLI::Range(1, 65535));
+        app->parse(argc, argv);
+    }
+    catch (const CLI::ParseError &e) {
+        return app->exit(e);
+    }
+    catch (const std::exception &e) {
+        std::cerr << "Error during initialization: " << e.what() << '\n';
+        return 1;
     }
 
-    const std::string dataDir = (argc > 1 && std::strcmp(argv[1], "_") != 0) ? argv[1] : "drone_simulation/data/test01_base";
-    const std::string configFilename = (argc > 2 && std::strcmp(argv[2], "_") != 0) ? argv[2] : "config.json";
-    const std::string ammoFilename = (argc > 3 && std::strcmp(argv[3], "_") != 0) ? argv[3] : "ammo.json";
-    const std::string targetsFilename = (argc > 4 && std::strcmp(argv[4], "_") != 0) ? argv[4] : "targets.json";
-    const std::string outputFilename = (argc > 5 && std::strcmp(argv[5], "_") != 0) ? argv[5] : "simulation.json";
-    uint16_t maxSteps = 10000;
-    if (argc > 6 && std::strcmp(argv[6], "_") != 0) {
-        try {
-            maxSteps = std::stoi(argv[6]);
-        }
-        catch (const std::exception &e) {
-            std::cerr << "Error parsing max steps: " << e.what() << '\n';
-            return 1;
-        }
-    }
+    std::cout << "data dir: " << options.dataDir << '\n';
+    std::cout << "config: " << options.configFilename << '\n';
+    std::cout << "ammo: " << options.ammoFilename << '\n';
+    std::cout << "targets: " << options.targetsFilename << '\n';
+    std::cout << "table: " << options.tableFilename << '\n';
+    std::cout << "solver: " << options.solverType << '\n';
+    std::cout << "output: " << options.outputFilename << '\n';
+    std::cout << "max steps: " << options.maxSteps << '\n';
+    std::cout << '\n';
 
     // > а тут взагалі потрібно використовувати стек?
-    const auto configOptions = std::make_unique<FileConfigLoaderOptions>(dataDir, configFilename, ammoFilename);
+    const auto configOptions = std::make_unique<FileConfigLoaderOptions>(options.dataDir, options.configFilename, options.ammoFilename);
 
     std::unique_ptr<IConfigLoader> configLoader = nullptr;
     std::unique_ptr<ITargetProvider> targets = nullptr;
     std::unique_ptr<IBallisticSolver> solver = nullptr;
     try {
         configLoader = ConfigLoaderFactory::create(*configOptions);
-        targets = TargetProviderFactory::create(ProviderType::JSON, dataDir + "/" + targetsFilename);
-        solver = BallisticSolverFactory::create(SolverType::ANALYTICAL);
+        targets = TargetProviderFactory::create(ProviderType::JSON, options.dataDir.string() + "/" + options.targetsFilename);
+        solver = BallisticSolverFactory::create(options.solverType, options.dataDir.string() + "/" + options.tableFilename);
     }
     catch (const std::exception &e) {
         std::cerr << "Error during initializing: " << e.what() << '\n';
@@ -133,7 +115,7 @@ int main(const int argc, char *argv[])
 
     std::unique_ptr<MissionProcessor> missionProcessor;
     try {
-        missionProcessor = std::make_unique<MissionProcessor>(maxSteps);
+        missionProcessor = std::make_unique<MissionProcessor>(options.maxSteps);
         missionProcessor->init(configLoader, targets);
         missionProcessor->changeSolver(solver);
 
@@ -154,9 +136,9 @@ int main(const int argc, char *argv[])
     // simulation.json (вихідний файл) - Результат симуляції.
     // ============================================================
     if (result < 1) {
-        std::ofstream outFile(outputFilename);
+        std::ofstream outFile(options.outputFilename);
         if (!outFile) {
-            std::cerr << "Error opening output file: " << outputFilename << '\n';
+            std::cerr << "Error opening output file: " << options.outputFilename << '\n';
             result = 1;
         }
         else {

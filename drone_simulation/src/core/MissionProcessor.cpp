@@ -205,11 +205,11 @@ bool MissionProcessor::doStep()
     curStep.targetIdx = bestTgtIdx;
 
     // точка влучання бомби
-    curStep.aimPoint.x = curStep.pos.x + (std::cos(ctx_->direction) * curStep.ballistic.hDist);  // hDist в нашій ситуації статичний
+    curStep.aimPoint.x = curStep.pos.x + (std::cos(ctx_->direction) * curStep.ballistic.hDist);
     curStep.aimPoint.y = curStep.pos.y + (std::sin(ctx_->direction) * curStep.ballistic.hDist);
 
     // позиція цілі на момент прильоту бомби
-    curStep.predictedTarget = bestTgtPos + bestTgtVelocity * curStep.ballistic.fTime;  // fTime статичний
+    curStep.predictedTarget = bestTgtPos + bestTgtVelocity * curStep.ballistic.fTime;
 
     // перевірка точності влучання
     const float dx = curStep.predictedTarget.x - curStep.aimPoint.x;
