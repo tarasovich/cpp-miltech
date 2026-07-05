@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_BALLISTICSOLVERFACTORY_HPP
-#define DRONE_SIMULATION_BALLISTICSOLVERFACTORY_HPP
+#pragma once
 
 #include "AnalyticalSolver.hpp"
 #include <cstdint>
@@ -28,5 +27,3 @@ public:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_BALLISTICSOLVERFACTORY_HPP

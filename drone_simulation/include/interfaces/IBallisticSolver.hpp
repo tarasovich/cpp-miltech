@@ -1,13 +1,8 @@
-#ifndef DRONE_SIMULATION_IBALLISTICSOLVER_HPP
-#define DRONE_SIMULATION_IBALLISTICSOLVER_HPP
+#pragma once
 
-#include "BallisticSolution.hpp"
+#include "types.hpp"
 
 namespace miltech::simulation {
-
-struct Coord;
-struct Config;
-struct AmmoParams;
 
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class IBallisticSolver {
@@ -17,5 +12,3 @@ public:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_IBALLISTICSOLVER_HPP

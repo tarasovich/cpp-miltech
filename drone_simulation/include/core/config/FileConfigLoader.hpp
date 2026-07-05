@@ -1,8 +1,6 @@
-#ifndef DRONE_SIMULATION_FILECONFIGLOADER_HPP
-#define DRONE_SIMULATION_FILECONFIGLOADER_HPP
+#pragma once
 
-#include "Config.hpp"
-#include "AmmoParams.hpp"
+#include "types.hpp"
 #include "IConfigLoader.hpp"
 #include <filesystem>
 #include <iostream>
@@ -112,5 +110,3 @@ private:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_FILECONFIGLOADER_HPP

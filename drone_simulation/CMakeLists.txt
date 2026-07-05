@@ -17,11 +17,13 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 add_executable(drone_simulation ${SOURCES} ${HEADERS})
 
 target_include_directories(drone_simulation PUBLIC
-		include/lib
+		include/
 		include/core
 		include/core/config
-		include/dto
+		include/core/providers
+		include/core/solvers
 		include/interfaces
+		include/lib
 )
 
 target_compile_options(drone_simulation PRIVATE -Wall -Wextra -pedantic)

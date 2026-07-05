@@ -1,11 +1,10 @@
-#include "Config.hpp"
-#include "AmmoParams.hpp"
-#include "Target.hpp"
+#include "types.hpp"
 #include "IConfigLoader.hpp"
 #include "ITargetProvider.hpp"
 #include "IBallisticSolver.hpp"
 #include "MissionProcessor.hpp"
 #include <cmath>
+#include <cstdint>
 
 namespace miltech::simulation {
 
@@ -97,16 +96,11 @@ void MissionProcessor::doInit(IConfigLoader *&configLoader, ITargetProvider *&ta
 
 void MissionProcessor::doReset()
 {
-    if (steps_ != nullptr) {
-        delete[] steps_;
-        steps_ = nullptr;
-    }
-
     currentStep_ = 0;
     currentTime_ = 0.0f;
 
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    steps_ = new SimStep[maxSteps_];
+    steps_.clear();
+    steps_.reserve(maxSteps_);
 
     // ReSharper disable once CppExpressionWithoutSideEffects
     initStep(currentStep_);
@@ -119,21 +113,24 @@ void MissionProcessor::initDerivedData()
     derivedData_.hitRadius = config_->hitRadius / 1.5f;
 }
 
-SimStep *MissionProcessor::initStep(const uint16_t stepIdx)
+SimStep &MissionProcessor::initStep(const uint16_t stepIdx)
 {
+    steps_.resize(stepIdx + 1);
+
+    auto &step = steps_.at(stepIdx);
+
     if (stepIdx == 0) {
-        steps_[stepIdx] = SimStep{};
-        steps_[stepIdx].pos = config_->startPos;
-        steps_[stepIdx].direction = config_->initialDir;
-        steps_[stepIdx].state = DroneState::STOPPED;
-        steps_[stepIdx].speed = 0.0f;
-        steps_[stepIdx].targetIdx = -1;
+        step.pos = config_->startPos;
+        step.direction = config_->initialDir;
+        step.state = DroneState::STOPPED;
+        step.speed = 0.0f;
+        step.targetIdx = -1;
     }
     else {
-        steps_[stepIdx] = steps_[stepIdx - 1];
+        step = steps_.at(stepIdx - 1);
     }
 
-    return &steps_[stepIdx];
+    return step;
 }
 
 bool MissionProcessor::doHasNext() const
@@ -143,7 +140,7 @@ bool MissionProcessor::doHasNext() const
 
 bool MissionProcessor::doStep()
 {
-    auto *curStep = &steps_[currentStep_];
+    auto &curStep = steps_.at(currentStep_);
 
     int bestTgtIdx = -1;
     float bestTotalTime{-1.0f};
@@ -154,32 +151,32 @@ bool MissionProcessor::doStep()
         float totalTime{};
         float desiredDir{};
 
-        const bool isAnotherTarget{curStep->targetIdx < 0 || static_cast<uint8_t>(curStep->targetIdx) != i};
+        const bool isAnotherTarget{curStep.targetIdx < 0 || static_cast<uint8_t>(curStep.targetIdx) != i};
 
         const auto target = targets_->getTarget(i);
         const float simPos = currentTime_ / config_->arrayTimeStep;
-        const auto tgtPosIdx = static_cast<uint8_t>(std::floor(simPos)) % target.timeSteps;
-        const auto prevPosIdx = static_cast<uint8_t>((tgtPosIdx + target.timeSteps - 1) % target.timeSteps);
+        const auto tgtPosIdx = static_cast<uint8_t>(std::floor(simPos)) % target.positions.size();
+        const auto prevPosIdx = static_cast<uint8_t>((tgtPosIdx + target.positions.size() - 1) % target.positions.size());
 
         // Вектор швидкості
-        const Coord velocity = (target.positions[tgtPosIdx] - target.positions[prevPosIdx]) * (1.0f / config_->arrayTimeStep);
+        const Coord velocity = (target.positions.at(tgtPosIdx) - target.positions.at(prevPosIdx)) * (1.0f / config_->arrayTimeStep);
         const float dt = (simPos - std::floor(simPos)) * config_->arrayTimeStep;
         // Поточна позиція цілі
-        const Coord targetPos = target.positions[tgtPosIdx] + velocity * dt;
+        const Coord targetPos = target.positions.at(tgtPosIdx) + velocity * dt;
 
         // Розрахувати орієнтовний час прильоту дрона до точки скиду (totalTime) для поточної позиції цілі
-        const auto basicSolution = solver_->solve(curStep->pos, targetPos, *config_, *ammoParams_);
-        calculateDirAndTimeToFire(basicSolution, *curStep, *config_, derivedData_, desiredDir, totalTime);
+        const auto basicSolution = solver_->solve(curStep.pos, targetPos, *config_, *ammoParams_);
+        calculateDirAndTimeToFire(basicSolution, curStep, *config_, derivedData_, desiredDir, totalTime);
 
         // Прогнозована позиція цілі на через totalTime
         const Coord predictedTargetPos = targetPos + velocity * totalTime;
-        const auto predictedSolution = solver_->solve(curStep->pos, predictedTargetPos, *config_, *ammoParams_);
-        calculateDirAndTimeToFire(predictedSolution, *curStep, *config_, derivedData_, desiredDir, totalTime);
+        const auto predictedSolution = solver_->solve(curStep.pos, predictedTargetPos, *config_, *ammoParams_);
+        calculateDirAndTimeToFire(predictedSolution, curStep, *config_, derivedData_, desiredDir, totalTime);
 
         // Штраф за зміну цілі
         if (isAnotherTarget) {
             const float targetSpeed = std::hypot(velocity.x, velocity.y);
-            const float turnTime = std::fabs(normalizeAngle(desiredDir - curStep->direction)) / config_->angularSpeed;
+            const float turnTime = std::fabs(normalizeAngle(desiredDir - curStep.direction)) / config_->angularSpeed;
             const float switchPenalty = baseTgtSwitchPenalty_ + (targetSpeed * turnTime / config_->hitRadius);
             totalTime += switchPenalty;
         }
@@ -188,7 +185,7 @@ bool MissionProcessor::doStep()
         // > timeToStop вже врахований у totalTime
         if (bestTotalTime < 0.0f || totalTime < bestTotalTime) {
             bestTgtIdx = i;
-            curStep->ballistic = predictedSolution;
+            curStep.ballistic = predictedSolution;
             bestDir = desiredDir;
             bestTgtPos = targetPos;
             bestTgtVelocity = velocity;
@@ -202,71 +199,71 @@ bool MissionProcessor::doStep()
     }
 
     // оновлюємо ціль поточного кроку
-    curStep->targetIdx = bestTgtIdx;
+    curStep.targetIdx = bestTgtIdx;
 
     // точка влучання бомби
-    curStep->aimPoint.x = curStep->pos.x + (std::cos(curStep->direction) * curStep->ballistic.hDist);  // hDist в нашій ситуації статичний
-    curStep->aimPoint.y = curStep->pos.y + (std::sin(curStep->direction) * curStep->ballistic.hDist);
+    curStep.aimPoint.x = curStep.pos.x + (std::cos(curStep.direction) * curStep.ballistic.hDist);  // hDist в нашій ситуації статичний
+    curStep.aimPoint.y = curStep.pos.y + (std::sin(curStep.direction) * curStep.ballistic.hDist);
 
     // позиція цілі на момент прильоту бомби
-    curStep->predictedTarget = bestTgtPos + bestTgtVelocity * curStep->ballistic.fTime;  // fTime статичний
+    curStep.predictedTarget = bestTgtPos + bestTgtVelocity * curStep.ballistic.fTime;  // fTime статичний
 
     // перевірка точності влучання
-    const float dx = curStep->predictedTarget.x - curStep->aimPoint.x;
-    const float dy = curStep->predictedTarget.y - curStep->aimPoint.y;
+    const float dx = curStep.predictedTarget.x - curStep.aimPoint.x;
+    const float dy = curStep.predictedTarget.y - curStep.aimPoint.y;
 
     // Симуляція завершується, коли дрон досягне точки скиду і скине боєприпас.
-    if ((dx * dx) + (dy * dy) <= (derivedData_.hitRadius * derivedData_.hitRadius) && curStep->state == DroneState::MOVING) {
+    if ((dx * dx) + (dy * dy) <= (derivedData_.hitRadius * derivedData_.hitRadius) && curStep.state == DroneState::MOVING) {
         std::cout << "DROPPED on step " << currentStep_ + 1 << '\n';
         isCompleted_ = true;
         return true;
     }
 
     // Наступний крок
-    auto *nextStep = initStep(currentStep_ + 1);
+    auto &nextStep = initStep(currentStep_ + 1);
 
     // 11. Перевірити кут повороту. Якщо > turnThreshold — змінити стан на DECELERATING/TURNING
-    const float deltaAngle = normalizeAngle(bestDir - nextStep->direction);
+    const float deltaAngle = normalizeAngle(bestDir - nextStep.direction);
     if (std::fabs(deltaAngle) > config_->turnThreshold) {
-        nextStep->state = nextStep->speed > 0.0f ? DroneState::DECELERATING : DroneState::TURNING;
+        nextStep.state = nextStep.speed > 0.0f ? DroneState::DECELERATING : DroneState::TURNING;
     }
     else {
         // Якщо кут ≤ turnThreshold — дрон змінює напрямок без зупинки.
-        nextStep->direction = bestDir;
+        nextStep.direction = bestDir;
 
         // якщо поворот завершено
-        if (nextStep->state == DroneState::TURNING) {
+        if (nextStep.state == DroneState::TURNING) {
             // розганяється у новому напрямку
-            nextStep->state = DroneState::ACCELERATING;
+            nextStep.state = DroneState::ACCELERATING;
         }
     }
 
     // 12.Оновити координати, швидкість та стан дрона відповідно до поточної фази
     bool isUpdateDroneCoords = false;
-    switch (nextStep->state) {
+    switch (nextStep.state) {
         case DroneState::STOPPED:
-            nextStep->state = DroneState::ACCELERATING;  // не стоїмо на місці
+            nextStep.state = DroneState::ACCELERATING;  // не стоїмо на місці
             break;
         case DroneState::ACCELERATING:
             // розгін
-            nextStep->speed += derivedData_.accel * config_->simTimeStep;
+            nextStep.speed += derivedData_.accel * config_->simTimeStep;
 
-            if (nextStep->speed >= config_->attackSpeed) {
+            if (nextStep.speed >= config_->attackSpeed) {
                 // досягли attackSpeed
-                nextStep->speed = config_->attackSpeed;
-                nextStep->state = DroneState::MOVING;  // рух зі сталою шв.
+                nextStep.speed = config_->attackSpeed;
+                nextStep.state = DroneState::MOVING;  // рух зі сталою шв.
             }
 
             isUpdateDroneCoords = true;  // оновити координати дрону
             break;
         case DroneState::DECELERATING:
             // гальмування
-            nextStep->speed -= derivedData_.accel * config_->simTimeStep;
+            nextStep.speed -= derivedData_.accel * config_->simTimeStep;
 
-            if (nextStep->speed <= 0.0f) {
+            if (nextStep.speed <= 0.0f) {
                 // зупинились
-                nextStep->speed = 0.0f;
-                nextStep->state = DroneState::STOPPED;
+                nextStep.speed = 0.0f;
+                nextStep.state = DroneState::STOPPED;
             }
 
             isUpdateDroneCoords = true;  // оновити координати дрону
@@ -274,12 +271,12 @@ bool MissionProcessor::doStep()
         case DroneState::TURNING: {
             // поворот на залишок
             const float turn = std::max(-derivedData_.stepTurn, std::min(derivedData_.stepTurn, deltaAngle));
-            nextStep->direction = normalizeAngle(nextStep->direction + turn);
+            nextStep.direction = normalizeAngle(nextStep.direction + turn);
 
             // якщо поворот завершено
-            if (std::fabs(normalizeAngle(bestDir - nextStep->direction)) <= 0.0f) {
-                nextStep->direction = bestDir;
-                nextStep->state = DroneState::ACCELERATING;  // починаємо розгон
+            if (std::fabs(normalizeAngle(bestDir - nextStep.direction)) <= 0.0f) {
+                nextStep.direction = bestDir;
+                nextStep.state = DroneState::ACCELERATING;  // починаємо розгон
             }
             break;
         }
@@ -292,15 +289,16 @@ bool MissionProcessor::doStep()
 
     // Оновлення позиції дрона
     if (isUpdateDroneCoords) {
-        nextStep->pos.x = curStep->pos.x + (std::cos(nextStep->direction) * nextStep->speed * config_->simTimeStep);
-        nextStep->pos.y = curStep->pos.y + (std::sin(nextStep->direction) * nextStep->speed * config_->simTimeStep);
+        nextStep.pos.x = curStep.pos.x + (std::cos(nextStep.direction) * nextStep.speed * config_->simTimeStep);
+        nextStep.pos.y = curStep.pos.y + (std::sin(nextStep.direction) * nextStep.speed * config_->simTimeStep);
     }
     else {
-        nextStep->pos = curStep->pos;
+        nextStep.pos = curStep.pos;
     }
 
     ++currentStep_;
     currentTime_ += config_->simTimeStep;
+
     return true;
 }
 

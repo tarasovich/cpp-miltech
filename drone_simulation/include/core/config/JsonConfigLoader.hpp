@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_JSONCONFIGLOADER_HPP
-#define DRONE_SIMULATION_JSONCONFIGLOADER_HPP
+#pragma once
 
 #include "FileConfigLoader.hpp"
 #include <fstream>
@@ -20,5 +19,3 @@ public:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_JSONCONFIGLOADER_HPP

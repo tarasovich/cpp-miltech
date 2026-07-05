@@ -1,9 +1,6 @@
-#ifndef DRONE_SIMULATION_ANALYTICALSOLVER_HPP
-#define DRONE_SIMULATION_ANALYTICALSOLVER_HPP
+#pragma once
 
-#include "Coord.hpp"
-#include "Config.hpp"
-#include "AmmoParams.hpp"
+#include "types.hpp"
 #include "IBallisticSolver.hpp"
 
 namespace miltech::simulation {
@@ -22,5 +19,3 @@ private:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_ANALYTICALSOLVER_HPP

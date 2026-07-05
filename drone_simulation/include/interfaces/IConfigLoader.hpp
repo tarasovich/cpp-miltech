@@ -1,5 +1,4 @@
-#ifndef DRONE_SIMULATION_ICONFIGLOADER_HPP
-#define DRONE_SIMULATION_ICONFIGLOADER_HPP
+#pragma once
 
 namespace miltech::simulation {
 
@@ -16,5 +15,3 @@ public:
 };
 
 }  // namespace miltech::simulation
-
-#endif  // DRONE_SIMULATION_ICONFIGLOADER_HPP
