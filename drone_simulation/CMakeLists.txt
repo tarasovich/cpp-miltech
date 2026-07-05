@@ -22,6 +22,7 @@ target_include_directories(drone_simulation PUBLIC
 		include/core/config
 		include/core/providers
 		include/core/solvers
+		include/core/states
 		include/interfaces
 		include/lib
 )

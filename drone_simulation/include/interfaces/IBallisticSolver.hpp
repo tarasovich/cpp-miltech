@@ -8,7 +8,7 @@ namespace miltech::simulation {
 class IBallisticSolver {
 public:
     virtual ~IBallisticSolver() = default;
-    virtual BallisticSolution solve(const Coord &dronePos, const Coord &targetPos, const Config &config, const AmmoParams &ammo) = 0;
+    virtual BallisticSolution solve(const Coord &dronePos, const Coord &targetPos, const DroneContext &ctx) = 0;
 };
 
 }  // namespace miltech::simulation

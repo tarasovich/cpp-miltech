@@ -3,7 +3,8 @@
 set -e
 
 FILES=$(git diff --cached --name-only --diff-filter=ACMR \
-    | grep -E '\.(cpp|hpp|h|c|cc|cxx)$' || true)
+    | grep -E '\.(cpp|hpp|h|c|cc|cxx)$' \
+    | grep -v '^drone_simulation/include/lib/' || true)
 
 [ -z "$FILES" ] && exit 0
 

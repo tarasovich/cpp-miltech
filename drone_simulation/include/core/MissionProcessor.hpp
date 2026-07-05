@@ -1,8 +1,7 @@
 #pragma once
 
 #include "types.hpp"
-#include <cstdint>
-#include <iostream>
+#include <memory>
 
 namespace miltech::simulation {
 
@@ -11,24 +10,12 @@ class IConfigLoader;
 class ITargetProvider;
 
 // ============================================================
-// Стани дрона (enum)
-// ============================================================
-enum class DroneState : uint8_t {
-    STOPPED = 0,
-    ACCELERATING = 1,
-    DECELERATING = 2,
-    TURNING = 3,
-    MOVING = 4,
-};
-
-// ============================================================
 // SimStep - Один крок симуляції для виведення.
 // ============================================================
 struct SimStep {
     Coord pos;                    // позиція дрона
     float direction;              // напрямок (рад)
-    float speed;                  // поточна швидкість
-    DroneState state;             // стан автомата (0-4)
+    uint8_t state;                // стан автомата (STOPPED - 0, ACCELERATING - 1, DECELERATING - 2, TURNING - 3, MOVING - 4)
     int targetIdx;                // індекс поточної цілі
     BallisticSolution ballistic;  // балістичне рішення для кращої цілі кроку
     Coord aimPoint;               // куди впаде бомба (якщо скинути зараз)
@@ -37,32 +24,22 @@ struct SimStep {
     // int num; // крок
 };
 
-struct MissionDerivedData {
-    float accel;      // прискорення дрону
-    float stepTurn;   // кут повороту за час симуляції
-    float hitRadius;  // радіус ураження
-};
-
 // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class MissionProcessor {
 public:
-    ~MissionProcessor() = default;
+    ~MissionProcessor();
 
-    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-    explicit MissionProcessor(const uint16_t maxSteps = 0, const float baseTgtSwitchPenalty = 0.0f)
-        : maxSteps_(maxSteps)
-        , baseTgtSwitchPenalty_(baseTgtSwitchPenalty)
-    {
-        if (maxSteps_ == 0) {
-            throw std::invalid_argument("MissionProcessor::MissionProcessor(): maxSteps must be greater than 0");
-        }
-    }
+    explicit MissionProcessor(uint16_t maxSteps = 0, float baseTgtSwitchPenalty = 0.0f);
 
     // Завантажити конфіг, підготувати дані для ітерації
-    void init(IConfigLoader *&configLoader, ITargetProvider *&targets)
+    void init(const std::unique_ptr<IConfigLoader> &configLoader, std::unique_ptr<ITargetProvider> &targets)
     {
         if (isInitialized_) {
             throw std::logic_error("MissionProcessor::init(): Mission already initialized");
+        }
+
+        if (!configLoader || !targets) {
+            throw std::invalid_argument("MissionProcessor::init(): dependency is null");
         }
 
         this->doInit(configLoader, targets);
@@ -91,10 +68,8 @@ public:
         doReset();
     }
 
-    void changeSolver(IBallisticSolver *&solver)  // Підмінити solver на льоту
-    {
-        solver_ = solver;
-    }
+    // Підмінити solver на льоту
+    void changeSolver(std::unique_ptr<IBallisticSolver> &solver);
 
     uint16_t getCurrentStep() const { return currentStep_; }
     uint16_t getStepsCount() const { return getCurrentStep() + 1; }
@@ -109,11 +84,9 @@ private:
     uint16_t currentStep_{0};
     bool isCompleted_{false};
 
-    const Config *config_ = nullptr;
-    const AmmoParams *ammoParams_ = nullptr;
-    const ITargetProvider *targets_ = nullptr;
-    IBallisticSolver *solver_ = nullptr;
-    MissionDerivedData derivedData_{};
+    std::unique_ptr<DroneContext> ctx_ = nullptr;
+    std::unique_ptr<ITargetProvider> targets_ = nullptr;
+    std::unique_ptr<IBallisticSolver> solver_ = nullptr;
 
     float baseTgtSwitchPenalty_{0.0f};
 
@@ -128,12 +101,11 @@ private:
         }
     }
 
-    void doInit(IConfigLoader *&configLoader, ITargetProvider *&targets);
+    void doInit(const std::unique_ptr<IConfigLoader> &configLoader, std::unique_ptr<ITargetProvider> &targets);
     void doReset();
     bool doHasNext() const;
     bool doStep();
 
-    void initDerivedData();
     SimStep &initStep(uint16_t stepIdx);
 };
 

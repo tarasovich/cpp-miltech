@@ -5,10 +5,10 @@ namespace miltech::simulation {
 
 constexpr float M_GI = 9.81;
 
-BallisticSolution AnalyticalSolver::solve(const Coord &dronePos, const Coord &targetPos, const Config &config, const AmmoParams &ammo)
+BallisticSolution AnalyticalSolver::solve(const Coord &dronePos, const Coord &targetPos, const DroneContext &ctx)
 {
-    const float fTime = calculateBombFallTime(config, ammo);
-    const float hDist = calculateBombFlightDistance(config, ammo, fTime);
+    const float fTime = calculateBombFallTime(ctx);
+    const float hDist = calculateBombFlightDistance(ctx, fTime);
 
     float tgtDist = std::sqrt(std::pow(targetPos.x - dronePos.x, 2.0f) + std::pow(targetPos.y - dronePos.y, 2.0f));
     if (std::fabs(tgtDist) < 1e-6f) {
@@ -28,22 +28,22 @@ BallisticSolution AnalyticalSolver::solve(const Coord &dronePos, const Coord &ta
     return BallisticSolution{.fTime = fTime, .hDist = hDist, .tgtDist = tgtDist, .fireCoords = fireCoords, .fireDist = fireDist};
 }
 
-float AnalyticalSolver::calculateBombFallTime(const Config &config, const AmmoParams &ammo)
+float AnalyticalSolver::calculateBombFallTime(const DroneContext &ctx)
 {
-    const float d = ammo.drag;
-    const float m = ammo.mass;
-    const float l = ammo.lift;
+    const float d = ctx.ammo->drag;
+    const float m = ctx.ammo->mass;
+    const float l = ctx.ammo->lift;
 
     // a = d·g·m − 2d²·l·V₀
     // b = −3g·m² + 3d·l·m·V₀
     // c = 6m²·Z₀
     float a{d * M_GI * m};
     float b{-3.0f * M_GI * m * m};
-    const float c{6.0f * m * m * config.altitude};
+    const float c{6.0f * m * m * ctx.cfg->altitude};
     if (l != 0.0f) {
         // спрощення формули при l=0
-        a -= 2.0f * d * d * l * config.attackSpeed;
-        b += 3.0f * d * l * m * config.attackSpeed;
+        a -= 2.0f * d * d * l * ctx.cfg->attackSpeed;
+        b += 3.0f * d * l * m * ctx.cfg->attackSpeed;
     }
 
     // p = − b² / (3a²)
@@ -72,11 +72,11 @@ float AnalyticalSolver::calculateBombFallTime(const Config &config, const AmmoPa
     return fTime;
 }
 
-float AnalyticalSolver::calculateBombFlightDistance(const Config &config, const AmmoParams &ammo, const float &fTime)
+float AnalyticalSolver::calculateBombFlightDistance(const DroneContext &ctx, const float &fTime)
 {
-    const float d = ammo.drag;
-    const float m = ammo.mass;
-    const float l = ammo.lift;
+    const float d = ctx.ammo->drag;
+    const float m = ctx.ammo->mass;
+    const float l = ctx.ammo->lift;
 
     // h = V₀t
     //   − t²d·V₀/(2m)
@@ -87,16 +87,16 @@ float AnalyticalSolver::calculateBombFlightDistance(const Config &config, const 
     const float m2{m * m};
     const float d2{d * d};
     const float l2{l * l};
-    float hDist = (config.attackSpeed * fTime) - (t2 * d * config.attackSpeed / (2.0f * m)) +
-                  (t2 * fTime * ((6.0f * d * M_GI * l * m) - (6.0f * d2 * (l2 - 1.0f) * config.attackSpeed)) / (36.0f * m2));
+    float hDist = (ctx.cfg->attackSpeed * fTime) - (t2 * d * ctx.cfg->attackSpeed / (2.0f * m)) +
+                  (t2 * fTime * ((6.0f * d * M_GI * l * m) - (6.0f * d2 * (l2 - 1.0f) * ctx.cfg->attackSpeed)) / (36.0f * m2));
     if (l != 0.0f) {
         // спрощення формули при l=0
         const float l2p1{l2 + 1.0f};
         hDist += (t2 * t2 *
-                  ((-6.0f * d2 * M_GI * l * (l2p1 + (l2 * l2)) * m) + (3.0f * d2 * d * l2 * l2p1 * config.attackSpeed) +
-                   (6.0f * d2 * d * l2 * l2 * l2p1 * config.attackSpeed)) /
+                  ((-6.0f * d2 * M_GI * l * (l2p1 + (l2 * l2)) * m) + (3.0f * d2 * d * l2 * l2p1 * ctx.cfg->attackSpeed) +
+                   (6.0f * d2 * d * l2 * l2 * l2p1 * ctx.cfg->attackSpeed)) /
                   (36.0f * l2p1 * l2p1 * m2 * m)) +
-                 (t2 * t2 * fTime * ((3.0f * d2 * d * M_GI * l2 * l * m) - (3.0f * d2 * d2 * l2 * l2p1 * config.attackSpeed)) /
+                 (t2 * t2 * fTime * ((3.0f * d2 * d * M_GI * l2 * l * m) - (3.0f * d2 * d2 * l2 * l2p1 * ctx.cfg->attackSpeed)) /
                   (36.0f * l2p1 * m2 * m2));
     }
 
