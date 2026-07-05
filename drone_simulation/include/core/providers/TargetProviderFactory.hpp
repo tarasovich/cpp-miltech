@@ -1,0 +1,29 @@
+#pragma once
+
+#include "JsonTargetProvider.hpp"
+#include <cstdint>
+
+namespace miltech::simulation {
+
+class ITargetProvider;
+
+enum class ProviderType : std::uint8_t { JSON };
+
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
+class TargetProviderFactory {
+public:
+    ~TargetProviderFactory() = default;
+
+    static ITargetProvider* create(const ProviderType type, const std::string& jsonPath)
+    {
+        switch (type) {
+            case ProviderType::JSON:
+                // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
+                return new JsonTargetProvider(jsonPath);
+            default:
+                throw std::invalid_argument("TargetProviderFactory::create(): Unsupported provider type");
+        }
+    }
+};
+
+}  // namespace miltech::simulation

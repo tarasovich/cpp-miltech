@@ -17,11 +17,27 @@ build-all: build
 format:
 	find . \( -name "*.cpp" -o -name "*.hpp" \) \
 		-not -path "./$(BUILD_DIR)/*" \
+		-not -path "*/include/lib/*" \
+		-exec clang-format -i {} +
+
+format-%:
+	find $* \
+		\( -name "*.cpp" -o -name "*.hpp" \) \
+		-not -path "./$(BUILD_DIR)/*" \
+		-not -path "*/include/lib/*" \
 		-exec clang-format -i {} +
 
 lint:
 	find . \( -name "*.cpp" -o -name "*.hpp" \) \
 		-not -path "./$(BUILD_DIR)/*" \
+		-not -path "*/include/lib/*" \
+		-exec clang-tidy {} -p $(BUILD_DIR)/$(DEFAULT_PRESET) \;
+
+lint-%:
+	find $* \
+		\( -name "*.cpp" -o -name "*.hpp" \) \
+		-not -path "./$(BUILD_DIR)/*" \
+		-not -path "*/include/lib/*" \
 		-exec clang-tidy {} -p $(BUILD_DIR)/$(DEFAULT_PRESET) \;
 
 test: build

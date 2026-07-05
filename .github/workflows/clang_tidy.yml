@@ -37,6 +37,15 @@ jobs:
       - name: Run clang-tidy on changed files
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          echo "Changed files: ${{ steps.changed-files.outputs.all_changed_files }}"
+          CHANGED_FILES=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" \
+              | tr ' ' '\n' \
+              | grep -E '\.(cpp|hpp)$' \
+              | grep -vE '^[^/]+/include/lib/' \
+              | tr '\n' ' ')
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No files to run clang-tidy on after filtering."
+            exit 0
+          fi
+          echo "Checking files: $CHANGED_FILES"
           sed -i "s|/home/runner/[^/]*|$GITHUB_WORKSPACE|g" build/debug/compile_commands.json
-          clang-tidy --config-file=./.devcontainer/.clang-tidy -p build/debug ${{ steps.changed-files.outputs.all_changed_files }}
+          clang-tidy --config-file=./.devcontainer/.clang-tidy -p build/debug $CHANGED_FILES
